@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Para el amor de mi vida❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-1: #fff5f6;
+      --bg-2: #ffe3e8;
+      --card-bg: #ffffff;
+      --primary: #e63946;
+      --primary-dark: #c22836;
+      --accent: #ffb703;
+      --gold: #d4a017;
+      --text: #4a4a4a;
+      --paper: #fffaf7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(ellipse at top, var(--bg-2) 0%, var(--bg-1) 55%, #fff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 24px;
+      position: relative;
+    }
+
+    #canvas-hearts, #canvas-burst {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    #canvas-hearts { z-index: 0; }
+    #canvas-burst { z-index: 60; }
+
+    .container {
+      z-index: 1;
+      width: 100%;
+      max-width: 430px;
+      text-align: center;
+    }
+
+    /* ===== SOBRE ===== */
+    .envelope-wrapper {
+      cursor: pointer;
+      margin: 20px auto;
+      perspective: 1200px;
+    }
+
+    .envelope-hint {
+      margin-top: 22px;
+      font-size: 0.85rem;
+      color: #b5555f;
+      letter-spacing: 0.5px;
+      animation: pulseHint 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.55; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-2px); }
+    }
+
+    .envelope {
+      position: relative;
+      width: 260px;
+      height: 175px;
+      margin: 0 auto;
+      background: linear-gradient(160deg, #fff7f2 0%, #ffe8de 100%);
+      border-radius: 6px;
+      box-shadow:
+        0 2px 4px rgba(180, 60, 70, 0.08),
+        0 18px 40px rgba(180, 60, 70, 0.18),
+        inset 0 0 0 1px rgba(230,57,70,0.06);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .envelope-wrapper:hover .envelope {
+      transform: translateY(-4px);
+      box-shadow:
+        0 4px 6px rgba(180, 60, 70, 0.1),
+        0 24px 46px rgba(180, 60, 70, 0.22),
+        inset 0 0 0 1px rgba(230,57,70,0.08);
+    }
+
+    .envelope-wrapper:active .envelope { transform: translateY(-1px) scale(0.98); }
+
+    .env-body {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(155deg, #ffe3d9 0%, #ffd3c4 100%);
+      clip-path: polygon(0 18%, 50% 52%, 100% 18%, 100% 100%, 0 100%);
+      border-radius: 6px;
+    }
+
+    .env-shadow-line {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(155deg, rgba(230,57,70,0.05), transparent 60%);
+      clip-path: polygon(0 18%, 50% 52%, 100% 18%, 100% 100%, 0 100%);
+    }
+
+    .env-flap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 58%;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      background: linear-gradient(200deg, #ffb4a3 0%, #f07167 55%, #e0564c 100%);
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      transition: transform 0.7s cubic-bezier(.6,.1,.3,1);
+      z-index: 3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .envelope.open .env-flap {
+      transform: rotateX(178deg);
+      z-index: 1;
+    }
+
+    .env-seal {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      width: 46px;
+      height: 46px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 35% 30%, #ff6b6b 0%, var(--primary-dark) 70%);
+      border-radius: 50%;
+      box-shadow: 0 3px 8px rgba(150,20,30,0.4), inset 0 -3px 4px rgba(0,0,0,0.25), inset 0 2px 3px rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffe9e9;
+      font-size: 1.3rem;
+      z-index: 4;
+      transition: transform 0.5s ease, opacity 0.4s ease;
+    }
+
+    .envelope.open .env-seal {
+      transform: translate(-50%,-50%) scale(0);
+      opacity: 0;
+    }
+
+    .env-peek {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      width: 82%;
+      height: 0%;
+      transform: translateX(-50%);
+      background: var(--paper);
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+      z-index: 2;
+      transition: height 0.6s ease 0.35s, transform 0.6s ease 0.35s;
+      overflow: hidden;
+    }
+
+    .envelope.open .env-peek {
+      height: 62%;
+      transform: translateX(-50%) translateY(-14%);
+    }
+
+    .env-peek::before {
+      content: '❤';
+      position: absolute;
+      top: 12px; left: 50%;
+      transform: translateX(-50%);
+      color: var(--primary);
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+
+    /* ===== CARTA / CONTENIDO ===== */
+    .letter {
+      display: none;
+      background: var(--card-bg);
+      padding: 30px 26px;
+      border-radius: 22px;
+      box-shadow: 0 14px 36px rgba(230,57,70,0.1), 0 2px 8px rgba(0,0,0,0.04);
+      animation: fadeIn 0.9s ease forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .letter::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(255,183,3,0.12), transparent 70%);
+      border-radius: 50%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    .message {
+      font-size: 0.96rem;
+      line-height: 1.7;
+      margin-bottom: 22px;
+      color: #5a5a5a;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    /* ===== CONTADOR DE TIEMPO JUNTOS ===== */
+    .together-card {
+      background: linear-gradient(155deg, #fff2f0 0%, #ffe6e9 100%);
+      border: 1px solid #ffd3d9;
+      border-radius: 18px;
+      padding: 18px 14px 16px;
+      margin-bottom: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .together-card::after {
+      content: '❤';
+      position: absolute;
+      right: -6px;
+      bottom: -14px;
+      font-size: 4rem;
+      color: rgba(230,57,70,0.06);
+    }
+
+    .together-label {
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary-dark);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .together-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .together-unit {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 4px 8px;
+      box-shadow: 0 3px 8px rgba(230,57,70,0.08);
+    }
+
+    .together-number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      transition: transform 0.15s ease;
+    }
+
+    .together-number.tick {
+      animation: numberPulse 0.35s ease;
+    }
+
+    @keyframes numberPulse {
+      0% { transform: scale(1.22); color: var(--accent); }
+      100% { transform: scale(1); color: var(--primary); }
+    }
+
+    .together-unit-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #b98088;
+      margin-top: 2px;
+    }
+
+    .together-since {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: #a97078;
+      font-style: italic;
+    }
+
+    .section-label {
+      text-align: left;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #c98a91;
+      font-weight: 600;
+      margin: 22px 0 10px 4px;
+    }
+
+    .cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #fffdfc, #fff6f5);
+      border: 1px solid #fbe2e4;
+      border-radius: 14px;
+      padding: 14px 16px;
+      text-align: left;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .card:hover, .card:active {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(230,57,70,0.08);
+      border-color: #ffc4cb;
+    }
+
+    .card-header {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--primary-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header .icon { font-size: 1.05rem; flex-shrink: 0; }
+
+    .card-header .plus {
+      color: var(--accent);
+      font-weight: 700;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .card.active .plus { transform: rotate(45deg); }
+
+    .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.4s ease, opacity 0.3s ease;
+      font-size: 0.86rem;
+      color: #6b6b6b;
+      opacity: 0;
+      line-height: 1.55;
+    }
+
+    .card.active .card-body {
+      max-height: 220px;
+      margin-top: 10px;
+      opacity: 1;
+    }
+
+    .btn-final {
+      margin-top: 28px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 14px 26px;
+      border-radius: 30px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(230, 57, 70, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+
+    .btn-final:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(230,57,70,0.42); }
+    .btn-final:active { transform: translateY(0); }
+
+    /* Modal de amor final */
+    .love-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(74,20,25,0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 70;
+      padding: 24px;
+    }
+
+    .love-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+
+    .love-modal {
+      background: var(--paper);
+      border-radius: 20px;
+      padding: 34px 26px;
+      max-width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .love-modal .big-heart {
+      font-size: 2.6rem;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: heartbeat 1.1s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.15); }
+      40% { transform: scale(0.98); }
+      60% { transform: scale(1.1); }
+    }
+
+    .love-modal p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--primary-dark);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .love-modal button {
+      background: none;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      padding: 9px 20px;
+      border-radius: 22px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 380px) {
+      .envelope { width: 220px; height: 150px; }
+      .together-number { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas-hearts"></canvas>
+  <canvas id="canvas-burst"></canvas>
+
+  <div class="container">
+    <div id="wrapper" class="envelope-wrapper" onclick="openLetter()">
+      <div id="envelope" class="envelope">
+        <div class="env-body"></div>
+        <div class="env-shadow-line"></div>
+        <div class="env-peek"></div>
+        <div class="env-flap"></div>
+        <div class="env-seal">❤</div>
+      </div>
+      <p class="envelope-hint">Toca el sobre para abrir 💗</p>
+    </div>
+
+    <div id="letter" class="letter">
+      <div class="eyebrow">Para ti Angie</div>
+      <h1 class="title">¡Holaa, mi amor!</h1>
+      <p class="message">
+        Quería hacerte un detallito especial que pudieras guardar para siempre.
+        Así como guardo yo cada momento que paso contigo, cada sonrisa y cada abrazo.
+        Gracias por acompañarme, sacarme sonrisas y hacer que cada día, hasta los
+        más grises, se sientan un poco más de colores.
+      </p>
+
+      <div class="together-card">
+        <div class="together-label">Llevamos juntos</div>
+        <div class="together-grid">
+          <div class="together-unit">
+            <div class="together-number" id="t-days">0</div>
+            <div class="together-unit-label">Días</div>
+          </div>
+          <div class="together-unit">
+            <div class="together-number" id="t-hours">00</div>
+            <div class="together-unit-label">Horas</div>
+          </div>
+          <div class="together-unit">
+            <div class="together-number" id="t-mins">00</div>
+            <div class="together-unit-label">Min</div>
+          </div>
+          <div class="together-unit">
+            <div class="together-number" id="t-secs">00</div>
+            <div class="together-unit-label">Seg</div>
+          </div>
+        </div>
+        <div class="together-since">desde el 13 de junio de 2026, y sigue sumando cada segundo 💓</div>
+      </div>
+
+      <div class="section-label">Razones por las que te amo 💘</div>
+      <div class="cards-grid">
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">😄</span><span style="flex:1">Tu risa</span><span class="plus">+</span></div>
+          <div class="card-body">Tu risa es de mis sonidos favoritos en el mundo. Tiene el poder de arreglarme el día entero, incluso cuando estoy estresado, me encanta.</div>
+        </div>
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">🤍</span><span style="flex:1">Cómo cuidas a los demás</span><span class="plus">+</span></div>
+          <div class="card-body">La forma en la que te preocupas por la gente que quieres, con detalles pequeños y constantes, me enseña todos los días lo que es amar bien.</div>
+        </div>
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">💪</span><span style="flex:1">Tu fuerza</span><span class="plus">+</span></div>
+          <div class="card-body">Admiro cómo enfrentas los días difíciles sin dejar de ser tú misma. Eres más fuerte de lo que crees, y eso me inspira constantemente en todo momento.</div>
+        </div>
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">⭐</span><span style="flex:1">13-6-2026</span><span class="plus">+</span></div>
+          <div class="card-body">Aquella tarde que salimos para conocernos y terminó siendo uno de los mejores días de mi vida. Todavía lo recuerdo con una sonrisa, la primera vez que tomé tu mano para nunca más soltarla.</div>
+        </div>
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">🏡</span><span style="flex:1">Cómo te sientes "hogar"</span><span class="plus">+</span></div>
+          <div class="card-body">No importa dónde estemos, contigo todo se siente en su lugar. Eres esa clase de paz que uno no sabía que necesitaba hasta encontrarla.</div>
+        </div>
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header"><span class="icon">💌</span><span style="flex:1">Una promesa</span><span class="plus">+</span></div>
+          <div class="card-body">Prometo estar ahí para ti, apoyarte en tus metas, celebrar tus logros y seguir acumulando momentos juntos, uno a la vez.</div>
+        </div>
+      </div>
+
+      <button class="btn-final" onclick="sendLove()">¿Te gustó el detallito mi niña? 💖</button>
+    </div>
+  </div>
+
+  <div class="love-overlay" id="loveOverlay">
+    <div class="love-modal">
+      <div class="big-heart">❤️</div>
+      <p>Te amo muchísimo. Gracias por ser la persona más increíble que conozco.</p>
+      <button onclick="closeLove()">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    function openLetter() {
+      const envelope = document.getElementById('envelope');
+      const wrapper = document.getElementById('wrapper');
+      const letter = document.getElementById('letter');
+
+      envelope.classList.add('open');
+
+      setTimeout(() => {
+        wrapper.style.display = 'none';
+        letter.style.display = 'block';
+      }, 750);
+    }
+
+    function toggleCard(cardElement) {
+      cardElement.classList.toggle('active');
+    }
+
+    function sendLove() {
+      document.getElementById('loveOverlay').classList.add('show');
+      launchBurst();
+    }
+    function closeLove() {
+      document.getElementById('loveOverlay').classList.remove('show');
+    }
+
+    /* ===== Contador en vivo "Llevamos juntos" ===== */
+    const startDate = new Date('2026-06-13T00:00:00');
+    const elDays = document.getElementById('t-days');
+    const elHours = document.getElementById('t-hours');
+    const elMins = document.getElementById('t-mins');
+    const elSecs = document.getElementById('t-secs');
+    let prevSecs = null;
+
+    function pad(n) { return n.toString().padStart(2, '0'); }
+
+    function tickPulse(el) {
+      el.classList.remove('tick');
+      void el.offsetWidth;
+      el.classList.add('tick');
+    }
+
+    function updateTogether() {
+      const now = new Date();
+      let diff = now - startDate;
+      if (diff < 0) diff = 0;
+
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+
+      elDays.textContent = days;
+      elHours.textContent = pad(hours);
+      elMins.textContent = pad(mins);
+      elSecs.textContent = pad(secs);
+
+      if (secs !== prevSecs) {
+        tickPulse(elSecs);
+        prevSecs = secs;
+      }
+    }
+
+    updateTogether();
+    setInterval(updateTogether, 1000);
+
+    /* ===== Corazones flotantes de fondo (ambiente) ===== */
+    const canvas = document.getElementById('canvas-hearts');
+    const ctx = canvas.getContext('2d');
+    let hearts = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawHeartPath(context, x, y, size) {
+      context.beginPath();
+      const topCurveHeight = size * 0.3;
+      context.moveTo(x, y + topCurveHeight);
+      context.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + topCurveHeight);
+      context.bezierCurveTo(
+        x - size / 2, y + (size + topCurveHeight) / 2,
+        x, y + (size + topCurveHeight) / 2,
+        x, y + size
+      );
+      context.bezierCurveTo(
+        x, y + (size + topCurveHeight) / 2,
+        x + size / 2, y + (size + topCurveHeight) / 2,
+        x + size / 2, y + topCurveHeight
+      );
+      context.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
+      context.closePath();
+    }
+
+    const heartColors = ['#e63946', '#ff8fa3', '#ffb703', '#f28482'];
+
+    class Heart {
+      constructor() { this.reset(true); }
+
+      reset(initial = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 30;
+        this.size = Math.random() * 14 + 8;
+        this.speedY = Math.random() * 0.9 + 0.35;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.4 + 0.25;
+        this.rotation = (Math.random() - 0.5) * 0.6;
+        this.rotSpeed = (Math.random() - 0.5) * 0.01;
+        this.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+        this.sway = Math.random() * Math.PI * 2;
+        this.swaySpeed = Math.random() * 0.02 + 0.01;
+      }
+
+      update() {
+        this.sway += this.swaySpeed;
+        this.y -= this.speedY;
+        this.x += this.speedX + Math.sin(this.sway) * 0.3;
+        this.rotation += this.rotSpeed;
+        if (this.y < -40) this.reset();
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillStyle = this.color;
+        drawHeartPath(ctx, 0, -this.size / 2, this.size);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 26; i++) hearts.push(new Heart());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hearts.forEach(h => { h.update(); h.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* ===== Explosión de corazones + confeti al presionar el botón final ===== */
+    const burstCanvas = document.getElementById('canvas-burst');
+    const bctx = burstCanvas.getContext('2d');
+
+    function resizeBurst() {
+      burstCanvas.width = window.innerWidth;
+      burstCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeBurst);
+    resizeBurst();
+
+    const burstColors = ['#e63946', '#ff8fa3', '#ffb703', '#f28482', '#ffd166', '#ff5d8f'];
+    let burstParticles = [];
+    let burstRunning = false;
+
+    class BurstParticle {
+      constructor(cx, cy) {
+        this.isHeart = Math.random() < 0.55;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 9 + 4;
+        this.x = cx;
+        this.y = cy;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 3;
+        this.gravity = 0.28;
+        this.size = this.isHeart ? (Math.random() * 10 + 8) : (Math.random() * 7 + 4);
+        this.color = burstColors[Math.floor(Math.random() * burstColors.length)];
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.3;
+        this.life = 1;
+        this.decay = Math.random() * 0.008 + 0.006;
+      }
+
+      update() {
+        this.vy += this.gravity;
+        this.vx *= 0.985;
+        this.vy *= 0.995;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.rotation += this.rotSpeed;
+        this.life -= this.decay;
+      }
+
+      draw() {
+        if (this.life <= 0) return;
+        bctx.save();
+        bctx.globalAlpha = Math.max(this.life, 0);
+        bctx.translate(this.x, this.y);
+        bctx.rotate(this.rotation);
+        bctx.fillStyle = this.color;
+        if (this.isHeart) {
+          drawHeartPath(bctx, 0, -this.size / 2, this.size);
+          bctx.fill();
+        } else {
+          bctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+        }
+        bctx.restore();
+      }
+    }
+
+    function launchBurst() {
+      const cx = burstCanvas.width / 2;
+      const cy = burstCanvas.height * 0.42;
+      const newOnes = [];
+      for (let i = 0; i < 70; i++) newOnes.push(new BurstParticle(cx, cy));
+      burstParticles = burstParticles.concat(newOnes);
+
+      if (!burstRunning) {
+        burstRunning = true;
+        runBurstLoop();
+      }
+    }
+
+    function runBurstLoop() {
+      bctx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
+      burstParticles.forEach(p => { p.update(); p.draw(); });
+      burstParticles = burstParticles.filter(p => p.life > 0 && p.y < burstCanvas.height + 60);
+
+      if (burstParticles.length > 0) {
+        requestAnimationFrame(runBurstLoop);
+      } else {
+        bctx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
+        burstRunning = false;
+      }
+    }
+  </script>
+</body>
+</html>
