@@ -75,8 +75,8 @@
 
     .envelope {
       position: relative;
-      width: 260px;
-      height: 175px;
+      width: min(260px, 78vw);
+      height: min(175px, 52vw);
       margin: 0 auto;
       background: linear-gradient(160deg, #fff7f2 0%, #ffe8de 100%);
       border-radius: 6px;
@@ -222,7 +222,7 @@
 
     .title {
       font-family: 'Caveat', cursive;
-      font-size: 2.5rem;
+      font-size: clamp(2rem, 8vw, 2.5rem);
       color: var(--primary);
       margin-bottom: 14px;
       line-height: 1.1;
@@ -269,20 +269,21 @@
     .together-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: clamp(5px, 2vw, 8px);
     }
 
     .together-unit {
       background: #ffffff;
       border-radius: 12px;
-      padding: 10px 4px 8px;
+      padding: 10px 3px 8px;
       box-shadow: 0 3px 8px rgba(230,57,70,0.08);
+      min-width: 0;
     }
 
     .together-number {
       font-family: 'Playfair Display', serif;
       font-weight: 600;
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 5vw, 1.5rem);
       color: var(--primary);
       font-variant-numeric: tabular-nums;
       transition: transform 0.15s ease;
@@ -365,6 +366,41 @@
     }
 
     .card.active .plus { transform: rotate(45deg); }
+
+    .card-portal {
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a2f6b 55%, #7d1128 100%);
+      border: 1px solid #2a3d7a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-portal::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 14px 14px;
+      opacity: 0.5;
+    }
+
+    .card-portal .card-header {
+      color: #fff;
+      position: relative;
+      z-index: 1;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 0.5px;
+    }
+
+    .card-portal .plus {
+      color: #ffd166;
+    }
+
+    .card-portal:hover {
+      border-color: #e63946;
+      box-shadow: 0 8px 20px rgba(230,57,70,0.35);
+    }
 
     .card-body {
       max-height: 0;
@@ -458,9 +494,29 @@
       font-size: 0.85rem;
     }
 
-    @media (max-width: 380px) {
-      .envelope { width: 220px; height: 150px; }
-      .together-number { font-size: 1.2rem; }
+    @media (max-width: 480px) {
+      body { padding: 14px; }
+      .letter { padding: 24px 18px; }
+      .card-header { font-size: 0.86rem; }
+    }
+
+    @media (max-width: 360px) {
+      .together-grid { gap: 5px; }
+      .together-unit { padding: 8px 2px 6px; }
+      .btn-final { padding: 13px 16px; font-size: 0.86rem; }
+    }
+
+    @media (max-width: 320px) {
+      .title { font-size: 1.8rem; }
+      .message { font-size: 0.88rem; }
+    }
+
+    @media (min-width: 900px) {
+      .container { max-width: 460px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .envelope-hint, #canvas-hearts { animation: none !important; }
     }
   </style>
 </head>
@@ -539,6 +595,9 @@
         <div class="card" onclick="toggleCard(this)">
           <div class="card-header"><span class="icon">💌</span><span style="flex:1">Una promesa</span><span class="plus">+</span></div>
           <div class="card-body">Prometo estar ahí para ti, apoyarte en tus metas, celebrar tus logros y seguir acumulando momentos juntos, uno a la vez.</div>
+        </div>
+        <div class="card card-portal" onclick="window.location.href='spiderman.html'">
+          <div class="card-header"><span class="icon">🕷️</span><span style="flex:1">9/8/2026 🕷️🕸️</span><span class="plus">↗</span></div>
         </div>
       </div>
 
@@ -708,6 +767,9 @@
       burstCanvas.height = window.innerHeight;
     }
     window.addEventListener('resize', resizeBurst);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => { resizeCanvas(); resizeBurst(); }, 200);
+    });
     resizeBurst();
 
     const burstColors = ['#e63946', '#ff8fa3', '#ffb703', '#f28482', '#ffd166', '#ff5d8f'];

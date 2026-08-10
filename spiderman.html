@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brand New Day — Nuestra Historia 🕷️🕸️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --spidey-red:#c8102e;
+    --spidey-red-dark:#8c0a20;
+    --spidey-blue:#1a2f6b;
+    --spidey-blue-dark:#0d1b3e;
+    --web-white:#f4f4f4;
+    --ink:#0a0a0a;
+    --gold:#ffd166;
+    --paper:#fffdf8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:
+      radial-gradient(circle at 50% 0%, #24397a 0%, #0d1b3e 45%, #060d20 100%);
+    color:var(--web-white);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* trama de puntos estilo comic (halftone) */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1.4px, transparent 1.4px);
+    background-size: 16px 16px;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  #web-canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* arañas colgando de un hilo, balanceándose */
+  .dangling-spider{
+    position:fixed;
+    top:0;
+    width:2px;
+    z-index:5;
+    pointer-events:none;
+    transform-origin:top center;
+    animation: swing 4.5s ease-in-out infinite;
+  }
+  .dangling-spider .thread{
+    width:1px;
+    background:rgba(255,255,255,0.35);
+    margin:0 auto;
+  }
+  .dangling-spider .spider-body{
+    width:22px;
+    height:22px;
+    margin-left:-10px;
+    position:relative;
+  }
+  .dangling-spider .spider-body svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .dangling-spider.d1{ left:6%; animation-duration:5.5s; }
+  .dangling-spider.d1 .thread{ height:70px; }
+  .dangling-spider.d2{ left:88%; animation-duration:4.2s; animation-delay:0.6s; }
+  .dangling-spider.d2 .thread{ height:110px; }
+  .dangling-spider.d3{ left:48%; animation-duration:6s; animation-delay:1.4s; }
+  .dangling-spider.d3 .thread{ height:50px; }
+
+  @keyframes swing{
+    0%, 100%{ transform:rotate(-11deg); }
+    50%{ transform:rotate(11deg); }
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    max-width:960px;
+    margin:0 auto;
+    padding:clamp(20px, 6vw, 40px) clamp(14px, 4vw, 20px) clamp(50px, 10vw, 90px);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    text-align:center;
+    padding:clamp(16px, 5vw, 30px) 10px clamp(24px, 6vw, 40px);
+    position:relative;
+  }
+
+  .hero-eyebrow{
+    font-family:'Permanent Marker', cursive;
+    color:var(--gold);
+    font-size:clamp(0.8rem, 2.6vw, 1rem);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    opacity:0.9;
+  }
+
+  .hero-title{
+    font-family:'Bangers', cursive;
+    font-size:clamp(2.2rem, 12vw, 5.2rem);
+    letter-spacing:clamp(1px, 0.6vw, 3px);
+    line-height:0.95;
+    background: linear-gradient(180deg, #ff5c72 0%, var(--spidey-red) 55%, #7d0a1c 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow: 0 0 30px rgba(200,16,46,0.35);
+    filter: drop-shadow(2px 4px 0 #05070f);
+    word-break:break-word;
+  }
+
+  .hero-sub{
+    font-family:'Permanent Marker', cursive;
+    font-size:clamp(0.85rem, 3vw, 1.15rem);
+    color:var(--web-white);
+    margin-top:10px;
+    opacity:0.85;
+    padding:0 6px;
+  }
+
+  .hero-date{
+    display:inline-block;
+    margin-top:22px;
+    padding:clamp(6px, 2vw, 8px) clamp(14px, 4vw, 20px);
+    border:2px dashed var(--gold);
+    border-radius:30px;
+    font-family:'Bangers', cursive;
+    letter-spacing:2px;
+    font-size:clamp(0.9rem, 3vw, 1.1rem);
+    color:var(--gold);
+  }
+
+  .thwip-hint{
+    margin-top:16px;
+    font-size:clamp(0.68rem, 2vw, 0.78rem);
+    color:#a9b6e0;
+    letter-spacing:0.5px;
+    padding:0 10px;
+  }
+
+  /* ===== SECCIONES ===== */
+  .section-title{
+    font-family:'Bangers', cursive;
+    font-size:clamp(1.5rem, 6vw, 2rem);
+    letter-spacing:2px;
+    color:var(--web-white);
+    text-align:center;
+    margin:clamp(40px, 10vw, 70px) 0 8px;
+    position:relative;
+    padding:0 8px;
+  }
+  .section-title span{
+    color:var(--spidey-red);
+    -webkit-text-stroke: 1px var(--web-white);
+  }
+  .section-subtitle{
+    text-align:center;
+    font-size:clamp(0.75rem, 2.4vw, 0.85rem);
+    color:#b6c0e6;
+    margin-bottom:32px;
+    padding:0 12px;
+    line-height:1.5;
+  }
+
+  /* ===== GALERIA ===== */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+    gap:clamp(12px, 3vw, 20px);
+  }
+
+  .panel{
+    position:relative;
+    border-radius:6px;
+    overflow:hidden;
+    aspect-ratio:3/4;
+    background:var(--paper);
+    box-shadow:0 12px 26px rgba(0,0,0,0.4);
+    border:3px solid var(--ink);
+    transform:rotate(var(--rot, 0deg));
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    cursor:pointer;
+  }
+  .panel:nth-child(2n){ --rot:1.4deg; }
+  .panel:nth-child(3n){ --rot:-1.6deg; }
+  .panel:nth-child(5n){ --rot:0.8deg; }
+
+  .panel:hover{
+    transform:rotate(0deg) translateY(-6px) scale(1.02);
+    box-shadow:0 18px 34px rgba(200,16,46,0.35);
+    z-index:2;
+  }
+
+  /* paneles para las FOTOS reales del usuario */
+  .panel.photo-slot{
+    background:linear-gradient(160deg, #1a2f6b, #0d1b3e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .photo-slot img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .photo-slot .placeholder{
+    text-align:center;
+    padding:14px;
+    color:#c9d3f2;
+  }
+  .photo-slot .placeholder .plus-icon{
+    font-size:2.4rem;
+    color:var(--gold);
+    display:block;
+    margin-bottom:8px;
+  }
+  .photo-slot .placeholder .label{
+    font-family:'Permanent Marker', cursive;
+    font-size:0.85rem;
+  }
+  .photo-slot .placeholder .hint{
+    font-size:0.65rem;
+    margin-top:6px;
+    opacity:0.7;
+    line-height:1.4;
+  }
+
+  .panel-tag{
+    position:absolute;
+    top:8px;
+    left:8px;
+    background:var(--spidey-red);
+    color:#fff;
+    font-family:'Bangers', cursive;
+    font-size:0.7rem;
+    letter-spacing:1px;
+    padding:3px 9px;
+    border-radius:3px;
+    z-index:3;
+    box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .panel-tag.tag-art{
+    background:var(--gold);
+    color:var(--ink);
+  }
+
+  .art-slot .placeholder .plus-icon{ color:#8ecbff; }
+  .art-slot{
+    background:linear-gradient(160deg, #2a1130, #0d1b3e);
+  }
+
+  /* portadas de comic ORIGINALES (homenaje, no reproducciones) */
+  .panel.cover{
+    background: linear-gradient(165deg, #fff7e8 0%, #ffe9c9 100%);
+    color:var(--ink);
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position:relative;
+  }
+
+  .panel.cover::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image: radial-gradient(rgba(200,16,46,0.18) 1.2px, transparent 1.2px);
+    background-size:7px 7px;
+    opacity:0.5;
+    pointer-events:none;
+  }
+
+  .cover-masthead{
+    font-family:'Bangers', cursive;
+    font-size:clamp(1.15rem, 4vw, 1.5rem);
+    letter-spacing:1px;
+    color:var(--spidey-red);
+    -webkit-text-stroke:1px var(--ink);
+    line-height:1;
+  }
+
+  .cover-issue{
+    align-self:flex-end;
+    background:var(--gold);
+    color:var(--ink);
+    font-family:'Bangers', cursive;
+    font-size:0.75rem;
+    padding:3px 8px;
+    border-radius:3px;
+    transform:rotate(-4deg);
+    margin-top:4px;
+  }
+
+  .cover-web{
+    position:absolute;
+    top:0; left:0;
+    width:70px; height:70px;
+    opacity:0.35;
+    z-index:0;
+  }
+
+  .cover-caption{
+    font-family:'Permanent Marker', cursive;
+    font-size:clamp(0.8rem, 2.6vw, 0.92rem);
+    line-height:1.35;
+    color:var(--spidey-blue-dark);
+    background:rgba(255,255,255,0.75);
+    border:2px solid var(--ink);
+    border-radius:14px;
+    padding:8px 10px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* burbuja de mensaje (speech bubble) */
+  .panel.bubble{
+    background:var(--paper);
+    color:var(--ink);
+    padding:20px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .bubble-inner{
+    position:relative;
+    font-family:'Permanent Marker', cursive;
+    font-size:clamp(0.85rem, 3vw, 1rem);
+    line-height:1.5;
+    color:var(--spidey-blue-dark);
+  }
+
+  .bubble-web-corner{
+    position:absolute;
+    width:46px;
+    height:46px;
+    opacity:0.5;
+  }
+  .bubble-web-corner.tl{ top:-16px; left:-16px; }
+  .bubble-web-corner.br{ bottom:-16px; right:-16px; transform:rotate(180deg); }
+
+  /* ===== RAZONES ===== */
+  .reasons{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  .reason{
+    background:linear-gradient(135deg, rgba(26,47,107,0.55), rgba(13,27,62,0.75));
+    border:1px solid rgba(255,209,102,0.25);
+    border-left:4px solid var(--spidey-red);
+    border-radius:10px;
+    padding:16px 18px;
+    text-align:left;
+    backdrop-filter:blur(2px);
+    position:relative;
+    overflow:hidden;
+  }
+  .reason::after{
+    content:'';
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    width:44px;
+    height:44px;
+    background-image:
+      repeating-conic-gradient(from 0deg, rgba(255,255,255,0.12) 0deg 2deg, transparent 2deg 45deg);
+    border-radius:50%;
+    opacity:0.5;
+  }
+  .reason .r-icon{ font-size:1.2rem; margin-right:8px; }
+  .reason .r-title{
+    font-family:'Bangers', cursive;
+    letter-spacing:1px;
+    font-size:1.05rem;
+    color:var(--gold);
+  }
+  .reason p{
+    margin-top:6px;
+    font-size:0.88rem;
+    line-height:1.6;
+    color:#dbe1f7;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{
+    text-align:center;
+    margin-top:70px;
+  }
+  .back-link{
+    display:inline-block;
+    font-family:'Bangers', cursive;
+    letter-spacing:1.5px;
+    font-size:1rem;
+    color:var(--ink);
+    background:var(--gold);
+    padding:12px 26px;
+    border-radius:30px;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(255,209,102,0.25);
+    transition:transform 0.2s ease;
+  }
+  .back-link:hover{ transform:translateY(-3px); }
+
+  .footer-note{
+    margin-top:16px;
+    font-size:0.72rem;
+    color:#8391c2;
+  }
+
+  @media (max-width:900px){
+    .gallery{ grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); }
+  }
+
+  @media (max-width:600px){
+    .hero-title{ letter-spacing:1px; }
+    .gallery{ grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .reasons{ padding:0 2px; }
+    .dangling-spider.d3{ display:none; }
+  }
+
+  @media (max-width:420px){
+    .gallery{ grid-template-columns:1fr; }
+    .panel{ aspect-ratio:4/3; }
+    .dangling-spider .spider-body{ width:18px; height:18px; margin-left:-9px; }
+    .dangling-spider.d1 .thread{ height:44px; }
+    .dangling-spider.d2 .thread{ height:60px; }
+    .back-link{ font-size:0.9rem; padding:11px 20px; }
+  }
+
+  @media (max-width:340px){
+    .hero-date{ letter-spacing:1px; }
+    .cover-masthead{ letter-spacing:0; }
+  }
+
+  @media (min-width:1400px){
+    .wrap{ max-width:1120px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .dangling-spider{ animation:none; }
+    *{ scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="web-canvas"></canvas>
+
+<div class="dangling-spider d1">
+  <div class="thread"></div>
+  <div class="spider-body">
+    <svg viewBox="0 0 24 24"><g fill="#0a0a0c"><ellipse cx="12" cy="15" rx="5" ry="6.5"/><ellipse cx="12" cy="7" rx="3.2" ry="3.6"/><g stroke="#0a0a0c" stroke-width="1.1" fill="none"><path d="M7,13 Q2,10 1,6"/><path d="M7,15 Q1,15 0,13"/><path d="M7,17 Q1,20 1,23"/><path d="M17,13 Q22,10 23,6"/><path d="M17,15 Q23,15 24,13"/><path d="M17,17 Q23,20 23,23"/></g></g></svg>
+  </div>
+</div>
+<div class="dangling-spider d2">
+  <div class="thread"></div>
+  <div class="spider-body">
+    <svg viewBox="0 0 24 24"><g fill="#0a0a0c"><ellipse cx="12" cy="15" rx="5" ry="6.5"/><ellipse cx="12" cy="7" rx="3.2" ry="3.6"/><g stroke="#0a0a0c" stroke-width="1.1" fill="none"><path d="M7,13 Q2,10 1,6"/><path d="M7,15 Q1,15 0,13"/><path d="M7,17 Q1,20 1,23"/><path d="M17,13 Q22,10 23,6"/><path d="M17,15 Q23,15 24,13"/><path d="M17,17 Q23,20 23,23"/></g></g></svg>
+  </div>
+</div>
+<div class="dangling-spider d3">
+  <div class="thread"></div>
+  <div class="spider-body">
+    <svg viewBox="0 0 24 24"><g fill="#0a0a0c"><ellipse cx="12" cy="15" rx="5" ry="6.5"/><ellipse cx="12" cy="7" rx="3.2" ry="3.6"/><g stroke="#0a0a0c" stroke-width="1.1" fill="none"><path d="M7,13 Q2,10 1,6"/><path d="M7,15 Q1,15 0,13"/><path d="M7,17 Q1,20 1,23"/><path d="M17,13 Q22,10 23,6"/><path d="M17,15 Q23,15 24,13"/><path d="M17,17 Q23,20 23,23"/></g></g></svg>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Con motivo de</div>
+    <h1 class="hero-title">BRAND<br>NEW DAY</h1>
+    <p class="hero-sub">— nuestra propia historia, tejida juntos —</p>
+    <div class="hero-date">9 · 8 · 2026 🕷️🕸️</div>
+  </div>
+
+  <div class="gallery" id="gallery">
+
+    <div class="panel photo-slot">
+      <span class="panel-tag">FOTO 1</span>
+      <img src="foto1.jpg" alt="Foto 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel cover">
+      <div class="cover-masthead">SPIDER-VERSE<br>OF US</div>
+      <div class="cover-issue">Ed. Especial</div>
+      <p class="cover-caption">"En cada universo posible, elijo el mismo final: el que termina contigo."</p>
+    </div>
+
+    <div class="panel photo-slot art-slot">
+      <span class="panel-tag tag-art">ARTE 1</span>
+      <img src="arte1.jpg" alt="Arte 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel bubble">
+      <div class="bubble-inner">"Mi sentido arácnido nunca se equivoca cuando se trata de ti."</div>
+    </div>
+
+    <div class="panel cover">
+      <div class="cover-masthead">THE<br>DAILY BUGLE</div>
+      <div class="cover-issue">N.Y. Edition</div>
+      <p class="cover-caption">Titular de hoy: "Héroe local jura amar a su chica más que a La Liga."</p>
+    </div>
+
+    <div class="panel photo-slot art-slot">
+      <span class="panel-tag tag-art">ARTE 2</span>
+      <img src="arte2.jpg" alt="Arte 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel photo-slot">
+      <span class="panel-tag">FOTO 2</span>
+      <img src="foto2.jpg" alt="Foto 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel bubble">
+      <div class="bubble-inner">"No necesito una araña radioactiva para saber que caí por ti para siempre."</div>
+    </div>
+
+    <div class="panel cover">
+      <div class="cover-masthead">AMAZING<br>US STORY</div>
+      <div class="cover-issue">#1 — Origen</div>
+      <p class="cover-caption">El día en que dos historias distintas se volvieron una sola trama.</p>
+    </div>
+
+    <div class="panel photo-slot art-slot">
+      <span class="panel-tag tag-art">ARTE 3</span>
+      <img src="arte3.jpg" alt="Arte 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel photo-slot">
+      <span class="panel-tag">FOTO 3</span>
+      <img src="foto3.jpg" alt="Foto 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+    <div class="panel bubble">
+      <div class="bubble-inner">"Balancearme entre edificios es fácil. Lo difícil sería vivir sin ti."</div>
+    </div>
+
+    <div class="panel photo-slot art-slot">
+      <span class="panel-tag tag-art">ARTE 4</span>
+      <img src="arte4.jpg" alt="Arte 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    </div>
+
+  </div>
+
+  <h2 class="section-title">Por qué eres mi <span>Mary Jane</span></h2>
+  <p class="section-subtitle">Razones tejidas con cariño, hilo a hilo</p>
+
+  <div class="reasons">
+    <div class="reason">
+      <span class="r-title"><span class="r-icon">🕸️</span>Siempre me atrapas</span>
+      <p>No importa qué tan lejos me sienta de todo, tú siempre logras traerme de vuelta con una sola llamada, un mensaje o una sonrisa.</p>
+    </div>
+    <div class="reason">
+      <span class="r-title"><span class="r-icon">🏙️</span>Mi ciudad favorita</span>
+      <p>Peter tiene Nueva York, yo te tengo a ti. Ese es el lugar al que siempre quiero volver, sin importar el día que haya tenido.</p>
+    </div>
+    <div class="reason">
+      <span class="r-title"><span class="r-icon">💥</span>Mi villano derrotado: el mal humor</span>
+      <p>Tienes un poder que ningún supervillano podría igualar: el de hacerme sonreír incluso en mis peores días.</p>
+    </div>
+    <div class="reason">
+      <span class="r-title"><span class="r-icon">🤍</span>Un nuevo día, contigo</span>
+      <p>"Brand New Day" me recordó que no importa cuántas veces el mundo se reinicie, en cada versión de mi historia, te elegiría a ti otra vez.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="back-link" href="index.html">← Volver a nuestra carta</a>
+  </div>
+
+</div>
+
+<script>
+  /* ===== Canvas: telarañas + spider "thwip" al hacer click ===== */
+  const canvas = document.getElementById('web-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  /* telaraña fija sutil en las esquinas */
+  function drawCornerWeb(x, y, radius, rings, spokes, flipX, flipY, alpha){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+    ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+    ctx.lineWidth = 1;
+
+    const angleStart = 0;
+    const angleEnd = Math.PI / 2;
+
+    for(let s = 0; s <= spokes; s++){
+      const a = angleStart + (angleEnd - angleStart) * (s / spokes);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(a) * radius, Math.sin(a) * radius);
+      ctx.stroke();
+    }
+
+    for(let r = 1; r <= rings; r++){
+      const rad = (radius / rings) * r;
+      ctx.beginPath();
+      for(let s = 0; s <= spokes; s++){
+        const a = angleStart + (angleEnd - angleStart) * (s / spokes);
+        const px = Math.cos(a) * rad;
+        const py = Math.sin(a) * rad;
+        if(s === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBackground(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Esquinas
+    drawCornerWeb(0, 0, 150, 6, 8, false, false, 0.14);
+    drawCornerWeb(canvas.width, 0, 180, 7, 9, true, false, 0.13);
+    drawCornerWeb(0, canvas.height, 140, 6, 7, false, true, 0.11);
+    drawCornerWeb(canvas.width, canvas.height, 190, 7, 9, true, true, 0.13);
+    // Puntos medios de los bordes
+    drawCornerWeb(canvas.width * 0.5, 0, 90, 4, 6, false, false, 0.08);
+    drawCornerWeb(0, canvas.height * 0.5, 100, 4, 6, false, false, 0.07);
+    drawCornerWeb(canvas.width, canvas.height * 0.5, 100, 4, 6, true, false, 0.07);
+    drawCornerWeb(canvas.width * 0.5, canvas.height, 90, 4, 6, false, true, 0.08);
+    // Hilos sueltos flotando en el fondo
+    looseThreads.forEach(t => t.draw());
+  }
+
+  /* hilos de telaraña sueltos, decorativos, cruzando la pantalla */
+  class LooseThread{
+    constructor(){ this.reset(); }
+    reset(){
+      this.x1 = Math.random() * canvas.width;
+      this.y1 = Math.random() * canvas.height;
+      const len = Math.random() * 180 + 90;
+      const angle = Math.random() * Math.PI * 2;
+      this.x2 = this.x1 + Math.cos(angle) * len;
+      this.y2 = this.y1 + Math.sin(angle) * len;
+      this.alpha = Math.random() * 0.06 + 0.03;
+      this.sag = Math.random() * 14 + 4;
+    }
+    draw(){
+      ctx.save();
+      ctx.strokeStyle = `rgba(244,244,244,${this.alpha})`;
+      ctx.lineWidth = 1;
+      const mx = (this.x1 + this.x2) / 2;
+      const my = (this.y1 + this.y2) / 2 + this.sag;
+      ctx.beginPath();
+      ctx.moveTo(this.x1, this.y1);
+      ctx.quadraticCurveTo(mx, my, this.x2, this.y2);
+      ctx.stroke();
+      // gotita de rocío
+      ctx.fillStyle = `rgba(255,209,102,${this.alpha * 4})`;
+      ctx.beginPath();
+      ctx.arc(mx, my, 1.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  const looseThreads = Array.from({length: 14}, () => new LooseThread());
+
+  /* ===== Efecto "thwip" (disparo de telaraña) al hacer click en la pantalla ===== */
+  let strands = [];
+
+  class WebStrand{
+    constructor(x, y){
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const len = Math.random() * 90 + 60;
+      this.tx = x + Math.cos(angle) * len;
+      this.ty = y + Math.sin(angle) * len;
+      this.progress = 0;
+      this.life = 1;
+    }
+    update(){
+      if(this.progress < 1) this.progress += 0.12;
+      else this.life -= 0.03;
+    }
+    draw(){
+      const cx = this.x + (this.tx - this.x) * this.progress;
+      const cy = this.y + (this.ty - this.y) * this.progress;
+      ctx.save();
+      ctx.globalAlpha = Math.max(this.life, 0);
+      ctx.strokeStyle = '#f4f4f4';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    for(let i = 0; i < 6; i++){
+      strands.push(new WebStrand(e.clientX, e.clientY));
+    }
+  });
+
+  document.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    if(!t) return;
+    for(let i = 0; i < 6; i++){
+      strands.push(new WebStrand(t.clientX, t.clientY));
+    }
+  }, { passive: true });
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(resize, 200);
+  });
+
+  /* ===== Arañas caminando por la pantalla ===== */
+  class CrawlingSpider{
+    constructor(){
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.angle = Math.random() * Math.PI * 2;
+      this.speed = Math.random() * 0.5 + 0.3;
+      this.size = Math.random() * 5 + 7;
+      this.legPhase = Math.random() * Math.PI * 2;
+      this.turnTimer = Math.random() * 120 + 60;
+    }
+    update(){
+      this.turnTimer--;
+      if(this.turnTimer <= 0){
+        this.angle += (Math.random() - 0.5) * 1.4;
+        this.turnTimer = Math.random() * 140 + 80;
+      }
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+
+      // rebota en los bordes
+      if(this.x < 10){ this.x = 10; this.angle = Math.PI - this.angle; }
+      if(this.x > canvas.width - 10){ this.x = canvas.width - 10; this.angle = Math.PI - this.angle; }
+      if(this.y < 10){ this.y = 10; this.angle = -this.angle; }
+      if(this.y > canvas.height - 10){ this.y = canvas.height - 10; this.angle = -this.angle; }
+
+      this.legPhase += 0.35;
+    }
+    draw(){
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle + Math.PI / 2);
+      ctx.fillStyle = 'rgba(10,10,12,0.75)';
+      ctx.strokeStyle = 'rgba(10,10,12,0.75)';
+      ctx.lineWidth = 1.2;
+
+      // patas (4 a cada lado, animadas)
+      for(let side = -1; side <= 1; side += 2){
+        for(let i = 0; i < 4; i++){
+          const legAngle = (i - 1.5) * 0.5;
+          const wiggle = Math.sin(this.legPhase + i) * 0.25;
+          const lx = Math.cos(legAngle + wiggle) * this.size * 1.8 * side;
+          const ly = Math.sin(legAngle + wiggle) * this.size * 0.6 - this.size * 0.2;
+          ctx.beginPath();
+          ctx.moveTo(0, -this.size * 0.2);
+          ctx.quadraticCurveTo(lx * 0.5 * side, ly - 2, lx, ly + this.size * 0.4);
+          ctx.stroke();
+        }
+      }
+
+      // cuerpo
+      ctx.beginPath();
+      ctx.ellipse(0, this.size * 0.35, this.size * 0.55, this.size * 0.7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // cabeza
+      ctx.beginPath();
+      ctx.ellipse(0, -this.size * 0.35, this.size * 0.35, this.size * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+  const spiders = Array.from({length: 6}, () => new CrawlingSpider());
+
+  function loop(){
+    drawBackground();
+    spiders.forEach(s => { s.update(); s.draw(); });
+    strands.forEach(s => { s.update(); s.draw(); });
+    strands = strands.filter(s => s.life > 0);
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  /* ===== pequeñas telarañas SVG decorativas dentro de las portadas ===== */
+  document.querySelectorAll('.panel.cover').forEach(panel => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'cover-web');
+    svg.setAttribute('viewBox', '0 0 70 70');
+    svg.innerHTML = `
+      <g stroke="#c8102e" stroke-width="1" fill="none">
+        <line x1="0" y1="0" x2="70" y2="70"/>
+        <line x1="0" y1="20" x2="50" y2="70"/>
+        <line x1="0" y1="40" x2="30" y2="70"/>
+        <line x1="20" y1="0" x2="70" y2="50"/>
+        <line x1="40" y1="0" x2="70" y2="30"/>
+        <path d="M5,5 Q35,20 65,5" />
+        <path d="M2,20 Q30,35 58,20" />
+        <path d="M0,38 Q22,48 42,38" />
+      </g>`;
+    panel.appendChild(svg);
+  });
+
+  /* burbujas con telarañita en las esquinas */
+  document.querySelectorAll('.panel.bubble .bubble-inner').forEach(bubble => {
+    ['tl','br'].forEach(pos => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', `bubble-web-corner ${pos}`);
+      svg.setAttribute('viewBox', '0 0 46 46');
+      svg.innerHTML = `
+        <g stroke="#1a2f6b" stroke-width="1" fill="none">
+          <line x1="0" y1="0" x2="46" y2="46"/>
+          <line x1="0" y1="15" x2="31" y2="46"/>
+          <line x1="15" y1="0" x2="46" y2="31"/>
+          <path d="M3,3 Q23,14 43,3" />
+          <path d="M1,15 Q20,26 37,15" />
+        </g>`;
+      bubble.appendChild(svg);
+    });
+  });
+</script>
+</body>
+</html>
