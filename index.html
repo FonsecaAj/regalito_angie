@@ -402,6 +402,18 @@
       box-shadow: 0 8px 20px rgba(230,57,70,0.35);
     }
 
+    .card-portal.music-portal {
+      background: linear-gradient(135deg, #a15bf0 0%, #5233c4 55%, #5f2a77 100%);
+      border: 1px solid #1e5c40;
+    }
+
+    .card-portal.music-portal:hover {
+      border-color: #ffd166;
+      box-shadow: 0 8px 20px rgba(29,185,84,0.3);
+    }
+
+    .card-portal.music-portal .plus { color: #1db954; }
+
     .card-body {
       max-height: 0;
       overflow: hidden;
@@ -598,6 +610,9 @@
         </div>
         <div class="card card-portal" onclick="window.location.href='spiderman.html'">
           <div class="card-header"><span class="icon">🕷️</span><span style="flex:1">9/8/2026 🕷️🕸️</span><span class="plus">↗</span></div>
+        </div>
+        <div class="card card-portal music-portal" onclick="window.location.href='musica.html'">
+          <div class="card-header"><span class="icon">🎵</span><span style="flex:1">Nuestro tocadiscos virtual</span><span class="plus">↗</span></div>
         </div>
       </div>
 

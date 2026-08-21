@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nuestro Tocadiscos 🎵</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood-1:#3a2418;
+    --wood-2:#5c3a26;
+    --vinyl-black:#141414;
+    --groove:#232323;
+    --accent-green:#1db954;
+    --gold:#ffd166;
+    --primary:#e63946;
+    --paper:#fffaf7;
+    --text:#3f2e28;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:
+      radial-gradient(ellipse at top, #2a1810 0%, #150c08 55%, #0a0605 100%);
+    color:var(--paper);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 18px 18px;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  #notes-canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    max-width:640px;
+    margin:0 auto;
+    padding:clamp(24px, 6vw, 44px) clamp(14px, 4vw, 22px) clamp(60px, 10vw, 90px);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    text-align:center;
+    margin-bottom:clamp(28px, 7vw, 44px);
+  }
+  .hero-eyebrow{
+    font-size:0.72rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--accent-green);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .hero-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(2.2rem, 9vw, 3.2rem);
+    color:var(--gold);
+    line-height:1.05;
+  }
+  .hero-sub{
+    font-size:clamp(0.8rem, 2.6vw, 0.92rem);
+    color:#e3d6c8;
+    margin-top:8px;
+    opacity:0.85;
+  }
+
+  /* ===== TOCADISCOS ===== */
+  .player-stage{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    padding:20px 0 10px;
+  }
+
+  .turntable-base{
+    position:relative;
+    width:min(340px, 82vw);
+    aspect-ratio:1/0.72;
+    background: linear-gradient(155deg, var(--wood-2) 0%, var(--wood-1) 100%);
+    border-radius:16px;
+    box-shadow:
+      0 20px 45px rgba(0,0,0,0.55),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+    padding:clamp(14px, 4vw, 22px);
+  }
+
+  .platter{
+    position:absolute;
+    left:50%;
+    top:52%;
+    transform:translate(-50%,-50%);
+    width:64%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background: radial-gradient(circle, #2a2a2a 0%, #1c1c1c 70%, #101010 100%);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.04);
+  }
+
+  .vinyl{
+    position:absolute;
+    inset:6%;
+    border-radius:50%;
+    background:
+      repeating-radial-gradient(circle, var(--groove) 0px, var(--groove) 1.6px, var(--vinyl-black) 1.6px, var(--vinyl-black) 3.6px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+    animation: spin 2.6s linear infinite;
+    animation-play-state: paused;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .vinyl.playing{ animation-play-state: running; }
+
+  .vinyl-sheen{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background: conic-gradient(from 200deg, rgba(255,255,255,0.09), transparent 30%, transparent 70%, rgba(255,255,255,0.06));
+    pointer-events:none;
+  }
+
+  .vinyl-label{
+    width:34%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--record-color, #e63946), var(--record-color-dark, #8c0a20) 75%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4), inset 0 0 0 2px rgba(255,255,255,0.15);
+    position:relative;
+    z-index:2;
+  }
+  .vinyl-label::after{
+    content:'';
+    width:16%;
+    aspect-ratio:1/1;
+    background:#141414;
+    border-radius:50%;
+    position:absolute;
+  }
+  .vinyl-label-text{
+    position:absolute;
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:0.55rem;
+    color:rgba(255,255,255,0.85);
+    text-align:center;
+    padding:0 14%;
+    line-height:1.1;
+    letter-spacing:0.5px;
+  }
+
+  @keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* brazo del tocadiscos */
+  .tonearm-pivot{
+    position:absolute;
+    top:8%;
+    right:6%;
+    width:14%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background: radial-gradient(circle, #d9d9d9, #8a8a8a 70%);
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+    z-index:5;
+    cursor:pointer;
+  }
+  .tonearm-pivot::after{
+    content:'';
+    position:absolute;
+    inset:32%;
+    border-radius:50%;
+    background:#333;
+  }
+
+  .tonearm{
+    position:absolute;
+    top:calc(8% + 4%);
+    right:calc(6% + 4%);
+    width:2.5%;
+    height:46%;
+    background: linear-gradient(90deg, #cfcfcf, #9c9c9c);
+    border-radius:3px;
+    transform-origin: top center;
+    transform: rotate(-32deg);
+    transition: transform 0.6s cubic-bezier(.5,0,.4,1.3);
+    z-index:4;
+    box-shadow:0 2px 5px rgba(0,0,0,0.4);
+  }
+  .tonearm::after{
+    content:'';
+    position:absolute;
+    bottom:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--accent-green);
+    box-shadow:0 0 6px var(--accent-green);
+  }
+
+  .tonearm.playing{
+    transform: rotate(4deg);
+  }
+
+  .play-hint{
+    text-align:center;
+    font-size:0.72rem;
+    color:#c9b8a6;
+    margin-top:14px;
+    letter-spacing:0.3px;
+  }
+
+  /* ===== reproductor spotify real ===== */
+  .now-playing{
+    margin-top:26px;
+    background: rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    padding:14px;
+    backdrop-filter: blur(4px);
+  }
+
+  .now-playing-label{
+    font-size:0.68rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--accent-green);
+    font-weight:600;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .now-playing-track{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+
+  .np-art{
+    width:52px;
+    height:52px;
+    border-radius:8px;
+    background: var(--record-color2, linear-gradient(135deg, #e63946, #8c0a20));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+    flex-shrink:0;
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .np-title{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:1rem;
+    color:var(--paper);
+  }
+  .np-artist{
+    font-size:0.78rem;
+    color:#c9b8a6;
+    margin-top:4px;
+    line-height:1.45;
+    font-style:italic;
+  }
+
+  .open-spotify-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    background: var(--accent-green);
+    color:#0a0a0a;
+    border:none;
+    padding:13px 18px;
+    border-radius:30px;
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:0.9rem;
+    cursor:pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 8px 18px rgba(29,185,84,0.3);
+  }
+  .open-spotify-btn:hover{
+    transform: translateY(-2px);
+    background:#1ed760;
+    box-shadow: 0 10px 22px rgba(29,185,84,0.4);
+  }
+  .open-spotify-btn:active{ transform: translateY(0); }
+
+  .spotify-frame-wrap iframe{
+    width:100%;
+    border-radius:12px;
+    border:none;
+  }
+
+
+  /* ===== CRATE DE DISCOS ===== */
+  .section-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.6rem, 6vw, 2.1rem);
+    color:var(--gold);
+    text-align:center;
+    margin:44px 0 4px;
+  }
+  .section-subtitle{
+    text-align:center;
+    font-size:0.78rem;
+    color:#c9b8a6;
+    margin-bottom:22px;
+    padding:0 10px;
+  }
+
+  .crate{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+    gap:14px;
+  }
+
+  .record-card{
+    background: linear-gradient(160deg, #fffdfb, #f4ece2);
+    border-radius:12px;
+    padding:12px;
+    cursor:pointer;
+    text-align:left;
+    box-shadow:0 8px 18px rgba(0,0,0,0.25);
+    border:2px solid transparent;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    position:relative;
+  }
+
+  .record-card:hover{
+    transform: translateY(-4px);
+  }
+
+  .record-card.selected{
+    border-color: var(--accent-green);
+    box-shadow:0 10px 22px rgba(29,185,84,0.3);
+  }
+
+  .record-sleeve{
+    width:100%;
+    aspect-ratio:1/1;
+    border-radius:8px;
+    margin-bottom:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.6rem;
+    background: var(--sleeve-color, linear-gradient(135deg, #e63946, #8c0a20));
+    color:rgba(255,255,255,0.9);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+  }
+
+  .record-title{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:0.86rem;
+    color:var(--text);
+    line-height:1.25;
+  }
+  .record-artist{
+    font-size:0.72rem;
+    color:#8a7a6d;
+    margin-top:2px;
+  }
+
+  .record-note{
+    margin-top:6px;
+    font-size:0.68rem;
+    color:#b25f6a;
+    font-style:italic;
+    line-height:1.35;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{
+    text-align:center;
+    margin-top:60px;
+  }
+  .back-link{
+    display:inline-block;
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:1.1rem;
+    color:#1a1a1a;
+    background:var(--gold);
+    padding:12px 28px;
+    border-radius:30px;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(255,209,102,0.25);
+    transition: transform 0.2s ease;
+  }
+  .back-link:hover{ transform:translateY(-3px); }
+
+  .footer-note{
+    margin-top:14px;
+    font-size:0.7rem;
+    color:#9c8a7c;
+    line-height:1.5;
+    padding:0 20px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .vinyl{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="notes-canvas"></canvas>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-eyebrow">De mi corazón para tu corazón</div>
+    <h1 class="hero-title">Nuestro Tocadiscos 💓</h1>
+    <p class="hero-sub">Dale al brazo del tocadiscos para una canción sorpresa, o elige una de los vinilos 🎶</p>
+  </div>
+
+  <div class="player-stage">
+    <div class="turntable-base">
+      <div class="platter">
+        <div class="vinyl" id="vinyl">
+          <div class="vinyl-sheen"></div>
+          <div class="vinyl-label" id="vinylLabel">
+            <span class="vinyl-label-text" id="vinylLabelText">Elige<br>un disco</span>
+          </div>
+        </div>
+      </div>
+      <div class="tonearm-pivot" id="tonearmPivot"></div>
+      <div class="tonearm" id="tonearm"></div>
+    </div>
+  </div>
+
+  <p class="play-hint" id="playHint">🎲 Toca el brazo plateado para una canción sorpresa</p>
+
+  <div class="now-playing" id="nowPlaying" style="display:none;">
+    <div class="now-playing-label">🎧 Listo para sonar</div>
+    <div class="now-playing-track">
+      <div class="np-art" id="npArt">🎵</div>
+      <div class="np-info">
+        <div class="np-title" id="npTitle">Canción</div>
+        <div class="np-artist" id="npArtist">Artista</div>
+      </div>
+    </div>
+    <button class="open-spotify-btn" id="openSpotifyBtn">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 10.02 15 10.68 18.72 12.9c.361.181.54.78.241 1.14zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.72-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.72 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      <span id="openSpotifyLabel">Abrir en Spotify</span>
+    </button>
+  </div>
+
+  <h2 class="section-title">Nuestros Vinilos 🗃️</h2>
+  <p class="section-subtitle">toca el brazo del tocadiscos para una sorpresa aleatoria, o elige una directamente mi amor</p>
+
+  <div class="crate" id="crate">
+    <div class="record-card selected"
+         data-track-id="4WefXOf8I4gMjdj2kBJgkl"
+         data-title="Patadas de ahogado" data-artist="" data-color="#e63946,#8c0a20" data-phrase="Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato.">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+      <div class="record-title">Patadas de ahogado</div>
+      <div class="record-note">"Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato."</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="0v9UztY5A12cJUsWD7PZzS"
+         data-title="AMOR DE CINE" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+      <div class="record-title">AMOR DE CINE</div>
+      <div class="record-note">"Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="1SZ36sAVA9Xy8XKFsCW51J"
+         data-title="novatos" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+      <div class="record-title">novatos</div>
+      <div class="record-note">"Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="4wtWL0UV8tCPv9VbUMLXYP"
+         data-title="No digas nada" data-artist="" data-color="#1db954,#0f5c30" data-phrase="¿Molestar en abrazarme? Créeme no es molestia, va a sanarme">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+      <div class="record-title">No digas nada</div>
+      <div class="record-note">"¿Molestar en abrazarme? Créeme no es molestia, va a sanarme"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="3iTVjevexCuVrBwmkR4qJc"
+         data-title="fantasmas" data-artist="" data-color="#7d1128,#3a0512" data-phrase="En esta casa no existen fantasmas, son puros recuerdos">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+      <div class="record-title">fantasmas</div>
+      <div class="record-note">"En esta casa no existen fantasmas, son puros recuerdos"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="4t46soaqA758rbukTO5pp1"
+         data-title="Mi bello Ángel" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="Tú, mi bello ángel que cayó del cielo">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+      <div class="record-title">Mi bello Ángel</div>
+      <div class="record-note">"Tú, mi bello ángel que cayó del cielo"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="1PREzVLuDT6PSE9sej4wnV"
+         data-title="Coqueta" data-artist="" data-color="#c9184a,#560318" data-phrase="Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+      <div class="record-title">Coqueta</div>
+      <div class="record-note">"Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="6TBzRwnX2oYd8aOrOuyK1p"
+         data-title="Fin de Semana" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="Con mis intenciones, te lo juro que te amo">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+      <div class="record-title">Fin de Semana</div>
+      <div class="record-note">"Con mis intenciones, te lo juro que te amo"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="1C3kTwvBsskFSdL95gXHej"
+         data-title="DESDE QUE TE FUISTE" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="Al menos quédate una luna más">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+      <div class="record-title">DESDE QUE TE FUISTE</div>
+      <div class="record-note">"Al menos quédate una luna más"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="4TFNKnMWjcMWzpkSwQrrcu"
+         data-title="Le Pido a DIOS" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+      <div class="record-title">Le Pido a DIOS</div>
+      <div class="record-note">"Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="41oY4WCTj5kccfesTVFnvN"
+         data-title="Tarot" data-artist="" data-color="#f4a261,#8a4a1c" data-phrase="Yo soy Da Vinci y tú mi obra de arte. Tú eres arte">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
+      <div class="record-title">Tarot</div>
+      <div class="record-note">"Yo soy Da Vinci y tú mi obra de arte. Tú eres arte"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="3Gs7mVfWKl567mjozgxmXv"
+         data-title="Niña bonita" data-artist="" data-color="#8338ec,#3a1470" data-phrase="Toma mi mano solo una noche, ya no te sientas solita">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
+      <div class="record-title">Niña bonita</div>
+      <div class="record-note">"Toma mi mano solo una noche, ya no te sientas solita"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="44XjoNvtwevktFKjvVe1vH"
+         data-title="Andrea" data-artist="" data-color="#e63946,#8c0a20" data-phrase="Lo malo siempre se sabe y lo bueno nunca se cuenta">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+      <div class="record-title">Andrea</div>
+      <div class="record-note">"Lo malo siempre se sabe y lo bueno nunca se cuenta"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="2DEZmgHKAvm41k4J3R2E9Y"
+         data-title="Safaera" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Mirá que safaera">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+      <div class="record-title">Safaera</div>
+      <div class="record-note">"Mirá que safaera"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="1Sym1HsTqsa2pYKhYL1j15"
+         data-title="Me gustas natural" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Me gustas natural, acabada de levantar sin maquillar">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+      <div class="record-title">Me gustas natural</div>
+      <div class="record-note">"Me gustas natural, acabada de levantar sin maquillar"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="4GKm1QaEr1tqJwUM0EsUl3"
+         data-title="Ama De Mi Sol" data-artist="" data-color="#1db954,#0f5c30" data-phrase="Hay un paraíso en tu corazón, tu risa me guiará">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+      <div class="record-title">Ama De Mi Sol</div>
+      <div class="record-note">"Hay un paraíso en tu corazón, tu risa me guiará"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="2ONADYjJvqYVwjWavuY0H1"
+         data-title="ALMA DINAMITA" data-artist="" data-color="#7d1128,#3a0512" data-phrase="Me gusta todo lo que sos y un poco más">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+      <div class="record-title">ALMA DINAMITA</div>
+      <div class="record-note">"Me gusta todo lo que sos y un poco más"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="2GNjjWYymmIS8HEC4Xp2eu"
+         data-title="ARRANCÁRMELO" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="¿Cómo van a convencerme de que la magia no existe?">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+      <div class="record-title">ARRANCÁRMELO</div>
+      <div class="record-note">"¿Cómo van a convencerme de que la magia no existe?"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="6FvMc0dfKvSbzFmqfT1GoG"
+         data-title="TQMQA" data-artist="" data-color="#c9184a,#560318" data-phrase="Te quiero más que ayer y mucho menos que mañana">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+      <div class="record-title">TQMQA</div>
+      <div class="record-note">"Te quiero más que ayer y mucho menos que mañana"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="3sNVsP50132BTNlImLx70i"
+         data-title="Bound 2" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="Bound to fall in love">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+      <div class="record-title">Bound 2</div>
+      <div class="record-note">"Bound to fall in love"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="1PDP7mLiAMwhfmgIwzhOm2"
+         data-title="Yebba&#x27;s Heartbreak" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="Can I show my love for you?">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+      <div class="record-title">Yebba&#x27;s Heartbreak</div>
+      <div class="record-note">"Can I show my love for you?"</div>
+    </div>
+
+    <div class="record-card"
+         data-track-id="7DfFc7a6Rwfi3YQMRbDMau"
+         data-title="Thinkin bout you" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="I&#x27;ve been thinkin bout you, do you think about me still?">
+      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+      <div class="record-title">Thinkin bout you</div>
+      <div class="record-note">"I&#x27;ve been thinkin bout you, do you think about me still?"</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="back-link" href="index.html">← Volver a nuestra carta</a>
+  </div>
+
+</div>
+
+<script>
+  const vinyl = document.getElementById('vinyl');
+  const vinylLabel = document.getElementById('vinylLabel');
+  const vinylLabelText = document.getElementById('vinylLabelText');
+  const tonearm = document.getElementById('tonearm');
+  const tonearmPivot = document.getElementById('tonearmPivot');
+  const playHint = document.getElementById('playHint');
+  const nowPlaying = document.getElementById('nowPlaying');
+  const npArt = document.getElementById('npArt');
+  const npTitle = document.getElementById('npTitle');
+  const npArtist = document.getElementById('npArtist');
+  const openSpotifyBtn = document.getElementById('openSpotifyBtn');
+  const crate = document.getElementById('crate');
+
+  let isPlaying = false;
+  let selectedCard = crate.querySelector('.record-card.selected');
+
+  function applyRecordVisual(card){
+    const [c1, c2] = (card.dataset.color || '#e63946,#8c0a20').split(',');
+    vinylLabel.style.setProperty('--record-color', c1);
+    vinylLabel.style.setProperty('--record-color-dark', c2);
+    vinylLabelText.innerHTML = `${card.dataset.title}`;
+
+    npArt.style.setProperty('--record-color2', `linear-gradient(135deg, ${c1}, ${c2})`);
+    npTitle.textContent = card.dataset.title;
+    npArtist.textContent = card.dataset.phrase ? `"${card.dataset.phrase}"` : '';
+  }
+
+  /* Abre la canción directamente en la app de Spotify.
+     El enlace open.spotify.com es un "enlace universal": en celular abre
+     la app de Spotify si está instalada (o la tienda si no), y en compu
+     abre la app de escritorio si está asociada, o si no, el navegador. */
+  function openInSpotify(trackId){
+    const webUrl = `https://open.spotify.com/track/${trackId}`;
+    window.open(webUrl, '_blank');
+  }
+
+  function highlightCard(card){
+    crate.querySelectorAll('.record-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  function pickRandomCard(excludeCurrent){
+    const cards = Array.from(crate.querySelectorAll('.record-card'));
+    if(cards.length <= 1) return cards[0];
+    let choice;
+    do {
+      choice = cards[Math.floor(Math.random() * cards.length)];
+    } while(excludeCurrent && choice === selectedCard && cards.length > 1);
+    return choice;
+  }
+
+  function selectRecord(card, andOpen){
+    highlightCard(card);
+    selectedCard = card;
+    applyRecordVisual(card);
+    nowPlaying.style.display = 'block';
+
+    if(andOpen){
+      startSpin();
+      openInSpotify(card.dataset.trackId);
+    }
+  }
+
+  function startSpin(){
+    isPlaying = true;
+    vinyl.classList.add('playing');
+    tonearm.classList.add('playing');
+    playHint.textContent = '🎶 Abriendo en Spotify... toca el brazo para bajarlo de nuevo';
+  }
+
+  function stopSpin(){
+    isPlaying = false;
+    vinyl.classList.remove('playing');
+    tonearm.classList.remove('playing');
+    playHint.textContent = '🎲 Toca el brazo plateado para una canción sorpresa';
+  }
+
+  function toggleTonearm(){
+    if(isPlaying){
+      stopSpin();
+      return;
+    }
+    const randomCard = pickRandomCard(true);
+    selectedCard = randomCard;
+    applyRecordVisual(randomCard);
+    highlightCard(randomCard);
+    nowPlaying.style.display = 'block';
+    startSpin();
+    openInSpotify(randomCard.dataset.trackId);
+  }
+
+  tonearmPivot.addEventListener('click', toggleTonearm);
+  tonearm.addEventListener('click', toggleTonearm);
+  vinyl.addEventListener('click', toggleTonearm);
+  openSpotifyBtn.addEventListener('click', () => {
+    startSpin();
+    openInSpotify(selectedCard.dataset.trackId);
+  });
+
+  crate.querySelectorAll('.record-card').forEach(card => {
+    card.addEventListener('click', () => selectRecord(card, true));
+  });
+
+  applyRecordVisual(selectedCard);
+
+  /* ===== notas musicales flotando de fondo ===== */
+  const canvas = document.getElementById('notes-canvas');
+  const ctx = canvas.getContext('2d');
+  const noteChars = ['♪','♫','♬','♩'];
+  let notes = [];
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+  resize();
+
+  class Note{
+    constructor(){ this.reset(true); }
+    reset(initial){
+      this.x = Math.random() * canvas.width;
+      this.y = initial ? Math.random() * canvas.height : canvas.height + 20;
+      this.size = Math.random() * 14 + 12;
+      this.speed = Math.random() * 0.5 + 0.25;
+      this.char = noteChars[Math.floor(Math.random() * noteChars.length)];
+      this.opacity = Math.random() * 0.12 + 0.05;
+      this.sway = Math.random() * Math.PI * 2;
+      this.swaySpeed = Math.random() * 0.015 + 0.008;
+    }
+    update(){
+      this.sway += this.swaySpeed;
+      this.y -= this.speed;
+      this.x += Math.sin(this.sway) * 0.3;
+      if(this.y < -30) this.reset(false);
+    }
+    draw(){
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      ctx.fillStyle = '#ffd166';
+      ctx.font = `${this.size}px sans-serif`;
+      ctx.fillText(this.char, this.x, this.y);
+      ctx.restore();
+    }
+  }
+  notes = Array.from({length: 18}, () => new Note());
+
+  function loop(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    notes.forEach(n => { n.update(); n.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+</script>
+</body>
+</html>
