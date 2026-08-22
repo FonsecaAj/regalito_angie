@@ -129,6 +129,10 @@
   }
 
   .vinyl.playing{ animation-play-state: running; }
+  .vinyl.mixtape-spin{
+    background:
+      repeating-radial-gradient(circle, #3a2e0a 0px, #3a2e0a 1.6px, #1a1405 1.6px, #1a1405 3.6px);
+  }
 
   .vinyl-sheen{
     position:absolute;
@@ -316,14 +320,240 @@
   }
   .open-spotify-btn:active{ transform: translateY(0); }
 
-  .spotify-frame-wrap iframe{
-    width:100%;
-    border-radius:12px;
-    border:none;
+  /* ===== DISCO ESPECIAL: MIXTAPE ===== */
+  .mixtape-record{
+    grid-column: 1 / -1;
+    background: linear-gradient(160deg, #2c2005 0%, #1a1405 100%);
+    border-radius:14px;
+    padding:16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border:2px solid #7a5c12;
+    box-shadow: 0 10px 26px rgba(212,160,23,0.25), inset 0 0 0 1px rgba(255,209,102,0.08);
+    position:relative;
+    overflow:hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .mixtape-record:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(212,160,23,0.35);
+  }
+  .mixtape-record::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image: radial-gradient(rgba(255,209,102,0.08) 1px, transparent 1px);
+    background-size:10px 10px;
+    pointer-events:none;
   }
 
+  .mixtape-disc{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    flex-shrink:0;
+    background:
+      repeating-radial-gradient(circle, #3a2e0a 0px, #3a2e0a 1.4px, #1a1405 1.4px, #1a1405 3.2px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation: spin 4s linear infinite;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+  .mixtape-seal{
+    width:34%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold), #a3760a 75%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+  }
 
-  /* ===== CRATE DE DISCOS ===== */
+  .mixtape-info{
+    flex:1;
+    text-align:left;
+    position:relative;
+    z-index:1;
+  }
+  .mixtape-eyebrow{
+    font-size:0.62rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:700;
+  }
+  .mixtape-title{
+    font-family:'Caveat', cursive;
+    font-size:1.4rem;
+    color:var(--paper);
+    line-height:1.1;
+    margin-top:2px;
+  }
+  .mixtape-sub{
+    font-size:0.72rem;
+    color:#c9b489;
+    margin-top:3px;
+  }
+  .mixtape-arrow{
+    color:var(--gold);
+    font-size:1.3rem;
+    flex-shrink:0;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ===== overlay del mixtape ===== */
+  .mixtape-overlay{
+    position:fixed;
+    inset:0;
+    background: rgba(8,5,2,0.82);
+    backdrop-filter: blur(6px);
+    z-index:100;
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .mixtape-overlay.show{ display:flex; }
+
+  .mixtape-panel{
+    background: linear-gradient(180deg, #1c1710, #100c07);
+    border:1px solid #4a3a12;
+    border-radius:20px 20px 0 0;
+    width:100%;
+    max-width:640px;
+    max-height:88vh;
+    display:flex;
+    flex-direction:column;
+    padding:20px clamp(14px, 4vw, 22px) 18px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+  }
+
+  .mixtape-panel-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .mixtape-panel-title{
+    font-family:'Caveat', cursive;
+    font-size:1.6rem;
+    color:var(--gold);
+  }
+  .mixtape-close{
+    background:none;
+    border:1px solid #5a4a1c;
+    color:var(--gold);
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:1rem;
+    line-height:1;
+  }
+
+  .mixtape-progress{
+    font-size:0.72rem;
+    color:#c9b489;
+    margin-bottom:12px;
+  }
+
+  .mixtape-list{
+    list-style:none;
+    overflow-y:auto;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding-right:4px;
+    margin-bottom:14px;
+  }
+
+  .mix-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition: background 0.2s ease;
+  }
+  .mix-item:hover{ background: rgba(255,209,102,0.06); }
+  .mix-item.mix-current{
+    background: rgba(255,209,102,0.14);
+    box-shadow: inset 0 0 0 1px rgba(255,209,102,0.35);
+  }
+  .mix-item.mix-played .mix-title{ color:#8a7a5c; }
+
+  .mix-num{
+    font-family:'Playfair Display', serif;
+    font-size:0.72rem;
+    color:#8a7350;
+    width:20px;
+    flex-shrink:0;
+    text-align:right;
+  }
+  .mix-info{
+    flex:1;
+    min-width:0;
+  }
+  .mix-title{
+    display:block;
+    font-size:0.86rem;
+    font-weight:600;
+    color:var(--paper);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .mix-phrase{
+    display:block;
+    font-size:0.7rem;
+    color:#a3916e;
+    font-style:italic;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .mix-check{
+    color:var(--accent-green);
+    font-size:0.9rem;
+    opacity:0;
+    flex-shrink:0;
+  }
+  .mix-item.mix-played .mix-check{ opacity:1; }
+
+  .mixtape-controls{
+    display:flex;
+    gap:10px;
+  }
+  .mixtape-btn{
+    flex:1;
+    border:none;
+    border-radius:26px;
+    padding:12px 14px;
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition: transform 0.2s ease;
+  }
+  .mixtape-btn:active{ transform: scale(0.97); }
+  .mixtape-btn.primary{
+    background: var(--gold);
+    color:#241a03;
+  }
+  .mixtape-btn.secondary{
+    background: rgba(255,255,255,0.08);
+    color: var(--paper);
+    border:1px solid rgba(255,209,102,0.25);
+  }
+
+  /* ===== CRATE DE DISCOS / TARJETAS CON DOBLE CARA ===== */
   .section-title{
     font-family:'Caveat', cursive;
     font-size:clamp(1.6rem, 6vw, 2.1rem);
@@ -346,25 +576,129 @@
   }
 
   .record-card{
-    background: linear-gradient(160deg, #fffdfb, #f4ece2);
-    border-radius:12px;
-    padding:12px;
+    perspective: 1600px;
+    aspect-ratio: 3/4;
     cursor:pointer;
-    text-align:left;
-    box-shadow:0 8px 18px rgba(0,0,0,0.25);
-    border:2px solid transparent;
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     position:relative;
   }
 
-  .record-card:hover{
-    transform: translateY(-4px);
+  /* sombra que se mueve y se estira durante el volteo, refuerza la profundidad */
+  .card-shadow{
+    position:absolute;
+    left:8%;
+    right:8%;
+    bottom:-8px;
+    height:14px;
+    border-radius:50%;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.38), transparent 72%);
+    transition: transform 0.7s cubic-bezier(.34,1.56,.64,1), opacity 0.7s ease;
+    transform-origin:center;
+    z-index:0;
+  }
+  .record-card.flipped .card-shadow{
+    transform: scaleX(0.75) scaleY(1.3);
+    opacity:0.6;
   }
 
-  .record-card.selected{
+  /* disco negro que asoma por detrás de la funda y se desliza al voltear */
+  .vinyl-peek{
+    position:absolute;
+    top:8%;
+    right:-6%;
+    width:46%;
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background:
+      repeating-radial-gradient(circle, #232323 0px, #232323 1.4px, #141414 1.4px, #141414 3.2px);
+    box-shadow: -4px 0 10px rgba(0,0,0,0.35);
+    z-index:0;
+    transition: transform 0.7s cubic-bezier(.4,.2,.2,1), right 0.7s cubic-bezier(.4,.2,.2,1);
+  }
+  .vinyl-peek::after{
+    content:'';
+    position:absolute;
+    inset:36%;
+    border-radius:50%;
+    background: linear-gradient(135deg, var(--gold), #a3760a);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
+  }
+  .record-card.flipped .vinyl-peek{
+    right:64%;
+    transform: rotate(-18deg);
+  }
+
+  .tilt-wrap{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+    transform: rotateY(var(--tilt-y, 0deg)) rotateX(var(--tilt-x, 0deg));
+    z-index:1;
+  }
+
+  .card-flip{
+    position:relative;
+    width:100%;
+    height:100%;
+    transition: transform 1.5s cubic-bezier(.34,1.56,.64,1);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .record-card.flipped .card-flip{
+    transform: rotateY(180deg);
+  }
+
+  .card-face{
+    position:absolute;
+    inset:0;
+    border-radius:12px;
+    padding:12px;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 8px 18px rgba(0,0,0,0.25);
+    border:2px solid transparent;
+  }
+
+  .card-front{
+    background: linear-gradient(160deg, #fffdfb, #f4ece2);
+    text-align:left;
+  }
+
+  .record-card.selected .card-front{
     border-color: var(--accent-green);
     box-shadow:0 10px 22px rgba(29,185,84,0.3);
   }
+
+  .card-back{
+    background: linear-gradient(160deg, #f7f1e3, #ecdfc4);
+    transform: rotateY(180deg);
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:10px;
+  }
+
+  .flip-btn{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    border:none;
+    background: rgba(0,0,0,0.12);
+    color:#3f2e28;
+    font-size:0.85rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+  }
+  .flip-btn:hover{ background: rgba(0,0,0,0.22); }
 
   .record-sleeve{
     width:100%;
@@ -387,18 +721,41 @@
     color:var(--text);
     line-height:1.25;
   }
-  .record-artist{
-    font-size:0.72rem;
-    color:#8a7a6d;
-    margin-top:2px;
+
+  .flip-hint{
+    margin-top:auto;
+    font-size:0.58rem;
+    color:#9c8a7c;
+    line-height:1.3;
+    padding-top:6px;
+  }
+
+  .back-label{
+    font-size:0.62rem;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:#a3763a;
+    font-weight:700;
   }
 
   .record-note{
-    margin-top:6px;
-    font-size:0.68rem;
-    color:#b25f6a;
+    font-size:0.76rem;
+    color:#5a4632;
     font-style:italic;
-    line-height:1.35;
+    line-height:1.4;
+    padding:0 4px;
+  }
+
+  .back-play-btn{
+    margin-top:4px;
+    background: var(--accent-green);
+    color:#0a0a0a;
+    border:none;
+    padding:7px 14px;
+    border-radius:20px;
+    font-size:0.72rem;
+    font-weight:600;
+    cursor:pointer;
   }
 
   /* ===== FOOTER ===== */
@@ -421,16 +778,9 @@
   }
   .back-link:hover{ transform:translateY(-3px); }
 
-  .footer-note{
-    margin-top:14px;
-    font-size:0.7rem;
-    color:#9c8a7c;
-    line-height:1.5;
-    padding:0 20px;
-  }
-
   @media (prefers-reduced-motion: reduce){
-    .vinyl{ animation:none !important; }
+    .vinyl, .mixtape-disc{ animation:none !important; }
+    .card-flip{ transition:none !important; }
   }
 </style>
 </head>
@@ -479,479 +829,1258 @@
   </div>
 
   <h2 class="section-title">Nuestros Vinilos 🗃️</h2>
-  <p class="section-subtitle">toca el brazo del tocadiscos para una sorpresa aleatoria, o elige una directamente mi amor</p>
+  <p class="section-subtitle">toca el brazo del tocadiscos para una sorpresa aleatoria, elige un disco, o voltéalo para leer la cara B</p>
 
   <div class="crate" id="crate">
+    <div class="mixtape-record" id="mixtapeCard" onclick="openMixtape()">
+      <div class="mixtape-disc">
+        <div class="mixtape-seal">❦</div>
+      </div>
+      <div class="mixtape-info">
+        <div class="mixtape-eyebrow">Edición para mi amor</div>
+        <div class="mixtape-title">Nuestra playlist 🙈</div>
+        <div class="mixtape-sub">Nuestras canciones</div>
+      </div>
+      <div class="mixtape-arrow">→</div>
+    </div>
+
     <div class="record-card selected"
-         data-track-id="66wkCYWlXzSTQAfnsPBptt"
-         data-title="My favorite part" data-artist="" data-color="#e63946,#8c0a20" data-phrase="This life can be so hard, I&#x27;d rather talk about you">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
-      <div class="record-title">My favorite part</div>
-      <div class="record-note">"This life can be so hard, I&#x27;d rather talk about you"</div>
+         data-track-id="66wkCYWlXzSTQAfnsPBptt" data-order="32"
+         data-title="My favorite part" data-color="#e63946,#8c0a20" data-phrase="This life can be so hard, I&#x27;d rather talk about you">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+          <div class="record-title">My favorite part</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"This life can be so hard, I&#x27;d rather talk about you"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3XrPM65ihtm4ZkZNGt30Ff"
-         data-title="Contigo" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Te puedo yo jurar ante un altar mi amor sincero">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
-      <div class="record-title">Contigo</div>
-      <div class="record-note">"Te puedo yo jurar ante un altar mi amor sincero"</div>
+         data-track-id="3XrPM65ihtm4ZkZNGt30Ff" data-order="39"
+         data-title="Contigo" data-color="#1a2f6b,#0d1b3e" data-phrase="Te puedo yo jurar ante un altar mi amor sincero">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+          <div class="record-title">Contigo</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Te puedo yo jurar ante un altar mi amor sincero"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6q4zA7hWKFF6wsJ64DWdwU"
-         data-title="Amor de siempre" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Amorcito sonriente, entraste sin advertirme">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
-      <div class="record-title">Amor de siempre</div>
-      <div class="record-note">"Amorcito sonriente, entraste sin advertirme"</div>
+         data-track-id="6q4zA7hWKFF6wsJ64DWdwU" data-order="40"
+         data-title="Amor de siempre" data-color="#d4a017,#8a6708" data-phrase="Amorcito sonriente, entraste sin advertirme">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+          <div class="record-title">Amor de siempre</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Amorcito sonriente, entraste sin advertirme"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="47DL8jY6HJD2mlCcTuOWKX"
-         data-title="Contando Ovejas" data-artist="" data-color="#1db954,#0f5c30" data-phrase="Siente que algo le falta que no nació completa, que nunca nadie supo cómo quererla de cerca">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
-      <div class="record-title">Contando Ovejas</div>
-      <div class="record-note">"Siente que algo le falta que no nació completa, que nunca nadie supo cómo quererla de cerca"</div>
+         data-track-id="47DL8jY6HJD2mlCcTuOWKX" data-order="51"
+         data-title="Contando Ovejas" data-color="#1db954,#0f5c30" data-phrase="Siente que algo le falta que no nació completa, que nunca nadie supo cómo quererla de cerca">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+          <div class="record-title">Contando Ovejas</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Siente que algo le falta que no nació completa, que nunca nadie supo cómo quererla de cerca"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3DarAbFujv6eYNliUTyqtz"
-         data-title="Kiss Me More" data-artist="" data-color="#7d1128,#3a0512" data-phrase="Can you kiss me more?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
-      <div class="record-title">Kiss Me More</div>
-      <div class="record-note">"Can you kiss me more?"</div>
+         data-track-id="3DarAbFujv6eYNliUTyqtz" data-order="27"
+         data-title="Kiss Me More" data-color="#7d1128,#3a0512" data-phrase="Can you kiss me more?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+          <div class="record-title">Kiss Me More</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Can you kiss me more?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1PDP7mLiAMwhfmgIwzhOm2"
-         data-title="Yebba&#x27;s Heartbreak" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="Can I show my love for you?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
-      <div class="record-title">Yebba&#x27;s Heartbreak</div>
-      <div class="record-note">"Can I show my love for you?"</div>
+         data-track-id="1PDP7mLiAMwhfmgIwzhOm2" data-order="21"
+         data-title="Yebba&#x27;s Heartbreak" data-color="#6a4c93,#2e1a4d" data-phrase="Can I show my love for you?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+          <div class="record-title">Yebba&#x27;s Heartbreak</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Can I show my love for you?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4t46soaqA758rbukTO5pp1"
-         data-title="Mi bello Ángel" data-artist="" data-color="#c9184a,#560318" data-phrase="Tú, mi bello ángel que cayó del cielo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
-      <div class="record-title">Mi bello Ángel</div>
-      <div class="record-note">"Tú, mi bello ángel que cayó del cielo"</div>
+         data-track-id="4t46soaqA758rbukTO5pp1" data-order="6"
+         data-title="Mi bello Ángel" data-color="#c9184a,#560318" data-phrase="Tú, mi bello ángel que cayó del cielo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+          <div class="record-title">Mi bello Ángel</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Tú, mi bello ángel que cayó del cielo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4GKm1QaEr1tqJwUM0EsUl3"
-         data-title="Ama De Mi Sol" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="Hay un paraíso en tu corazón, tu risa me guiará">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
-      <div class="record-title">Ama De Mi Sol</div>
-      <div class="record-note">"Hay un paraíso en tu corazón, tu risa me guiará"</div>
+         data-track-id="4GKm1QaEr1tqJwUM0EsUl3" data-order="16"
+         data-title="Ama De Mi Sol" data-color="#3a5bd9,#0d1b3e" data-phrase="Hay un paraíso en tu corazón, tu risa me guiará">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+          <div class="record-title">Ama De Mi Sol</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Hay un paraíso en tu corazón, tu risa me guiará"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6kdCN6gTWLcLxmLXoUcwuI"
-         data-title="Eres" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="El que por ti daría la vida ese soy">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
-      <div class="record-title">Eres</div>
-      <div class="record-note">"El que por ti daría la vida ese soy"</div>
+         data-track-id="6kdCN6gTWLcLxmLXoUcwuI" data-order="54"
+         data-title="Eres" data-color="#ff8fa3,#8c0a20" data-phrase="El que por ti daría la vida ese soy">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+          <div class="record-title">Eres</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"El que por ti daría la vida ese soy"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4DhTBCvoemYivBVHkk7RKI"
-         data-title="Cafuné" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="Si te fallo quiero que no me perdones">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
-      <div class="record-title">Cafuné</div>
-      <div class="record-note">"Si te fallo quiero que no me perdones"</div>
+         data-track-id="4DhTBCvoemYivBVHkk7RKI" data-order="57"
+         data-title="Cafuné" data-color="#2a9d8f,#0e3d38" data-phrase="Si te fallo quiero que no me perdones">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+          <div class="record-title">Cafuné</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Si te fallo quiero que no me perdones"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="0qXP5fMhxGzxALOkXYUxfP"
-         data-title="Loverboy" data-artist="" data-color="#f4a261,#8a4a1c" data-phrase="Now everybody wants to be like us, they&#x27;re getting jealous, feel it now">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
-      <div class="record-title">Loverboy</div>
-      <div class="record-note">"Now everybody wants to be like us, they&#x27;re getting jealous, feel it now"</div>
+         data-track-id="0qXP5fMhxGzxALOkXYUxfP" data-order="44"
+         data-title="Loverboy" data-color="#f4a261,#8a4a1c" data-phrase="Now everybody wants to be like us, they&#x27;re getting jealous, feel it now">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
+          <div class="record-title">Loverboy</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Now everybody wants to be like us, they&#x27;re getting jealous, feel it now"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2GNjjWYymmIS8HEC4Xp2eu"
-         data-title="ARRANCÁRMELO" data-artist="" data-color="#8338ec,#3a1470" data-phrase="¿Cómo van a convencerme de que la magia no existe?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
-      <div class="record-title">ARRANCÁRMELO</div>
-      <div class="record-note">"¿Cómo van a convencerme de que la magia no existe?"</div>
+         data-track-id="2GNjjWYymmIS8HEC4Xp2eu" data-order="18"
+         data-title="ARRANCÁRMELO" data-color="#8338ec,#3a1470" data-phrase="¿Cómo van a convencerme de que la magia no existe?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
+          <div class="record-title">ARRANCÁRMELO</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"¿Cómo van a convencerme de que la magia no existe?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="7KA4W4McWYRpgf0fWsJZWB"
-         data-title="See You Again" data-artist="" data-color="#e76f51,#7a2e0f" data-phrase="¿Me das un beso? ¿Y podrías hacer que dure para siempre?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
-      <div class="record-title">See You Again</div>
-      <div class="record-note">"¿Me das un beso? ¿Y podrías hacer que dure para siempre?"</div>
+         data-track-id="7KA4W4McWYRpgf0fWsJZWB" data-order="26"
+         data-title="See You Again" data-color="#e76f51,#7a2e0f" data-phrase="¿Me das un beso? ¿Y podrías hacer que dure para siempre?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
+          <div class="record-title">See You Again</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"¿Me das un beso? ¿Y podrías hacer que dure para siempre?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6TBzRwnX2oYd8aOrOuyK1p"
-         data-title="Fin de Semana" data-artist="" data-color="#457b9d,#1d3557" data-phrase="Con mis intenciones, te lo juro que te amo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
-      <div class="record-title">Fin de Semana</div>
-      <div class="record-note">"Con mis intenciones, te lo juro que te amo"</div>
+         data-track-id="6TBzRwnX2oYd8aOrOuyK1p" data-order="8"
+         data-title="Fin de Semana" data-color="#457b9d,#1d3557" data-phrase="Con mis intenciones, te lo juro que te amo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
+          <div class="record-title">Fin de Semana</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Con mis intenciones, te lo juro que te amo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4KGGeE7RJsgLNZmnxGFlOj"
-         data-title="Falling Behind" data-artist="" data-color="#f77f00,#8a4300" data-phrase="I&#x27;ve never had a shoulder to cry on, someone to call mine">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
-      <div class="record-title">Falling Behind</div>
-      <div class="record-note">"I&#x27;ve never had a shoulder to cry on, someone to call mine"</div>
+         data-track-id="4KGGeE7RJsgLNZmnxGFlOj" data-order="41"
+         data-title="Falling Behind" data-color="#f77f00,#8a4300" data-phrase="I&#x27;ve never had a shoulder to cry on, someone to call mine">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
+          <div class="record-title">Falling Behind</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I&#x27;ve never had a shoulder to cry on, someone to call mine"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2z9iuAxKv4TTeCrPAxxKg9"
-         data-title="Love lost" data-artist="" data-color="#9d4edd,#3c096c" data-phrase="How the hell you make me fall in love with you?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
-      <div class="record-title">Love lost</div>
-      <div class="record-note">"How the hell you make me fall in love with you?"</div>
+         data-track-id="2z9iuAxKv4TTeCrPAxxKg9" data-order="24"
+         data-title="Love lost" data-color="#9d4edd,#3c096c" data-phrase="How the hell you make me fall in love with you?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
+          <div class="record-title">Love lost</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"How the hell you make me fall in love with you?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2i2gDpKKWjvnRTOZRhaPh2"
-         data-title="Moonlight" data-artist="" data-color="#e63946,#8c0a20" data-phrase="I just wanna get high with my lover">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
-      <div class="record-title">Moonlight</div>
-      <div class="record-note">"I just wanna get high with my lover"</div>
+         data-track-id="2i2gDpKKWjvnRTOZRhaPh2" data-order="28"
+         data-title="Moonlight" data-color="#e63946,#8c0a20" data-phrase="I just wanna get high with my lover">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+          <div class="record-title">Moonlight</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I just wanna get high with my lover"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1SZ36sAVA9Xy8XKFsCW51J"
-         data-title="novatos" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
-      <div class="record-title">novatos</div>
-      <div class="record-note">"Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals"</div>
+         data-track-id="1SZ36sAVA9Xy8XKFsCW51J" data-order="3"
+         data-title="novatos" data-color="#1a2f6b,#0d1b3e" data-phrase="Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+          <div class="record-title">novatos</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2LMkwUfqC6S6s6qDVlEuzV"
-         data-title="White Ferrari" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Stick by me, close by me">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
-      <div class="record-title">White Ferrari</div>
-      <div class="record-note">"Stick by me, close by me"</div>
+         data-track-id="2LMkwUfqC6S6s6qDVlEuzV" data-order="35"
+         data-title="White Ferrari" data-color="#d4a017,#8a6708" data-phrase="Stick by me, close by me">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+          <div class="record-title">White Ferrari</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Stick by me, close by me"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1Sym1HsTqsa2pYKhYL1j15"
-         data-title="Me gustas natural" data-artist="" data-color="#1db954,#0f5c30" data-phrase="Me gustas natural, acabada de levantar sin maquillar">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
-      <div class="record-title">Me gustas natural</div>
-      <div class="record-note">"Me gustas natural, acabada de levantar sin maquillar"</div>
+         data-track-id="1Sym1HsTqsa2pYKhYL1j15" data-order="15"
+         data-title="Me gustas natural" data-color="#1db954,#0f5c30" data-phrase="Me gustas natural, acabada de levantar sin maquillar">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+          <div class="record-title">Me gustas natural</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Me gustas natural, acabada de levantar sin maquillar"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="19a3JfW8BQwqHWUMbcqSx8"
-         data-title="Famous" data-artist="" data-color="#7d1128,#3a0512" data-phrase="Jajajajaj">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
-      <div class="record-title">Famous</div>
-      <div class="record-note">"Jajajajaj"</div>
+         data-track-id="19a3JfW8BQwqHWUMbcqSx8" data-order="38"
+         data-title="Famous" data-color="#7d1128,#3a0512" data-phrase="Jajajajaj">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+          <div class="record-title">Famous</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Jajajajaj"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1PREzVLuDT6PSE9sej4wnV"
-         data-title="Coqueta" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
-      <div class="record-title">Coqueta</div>
-      <div class="record-note">"Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez"</div>
+         data-track-id="1PREzVLuDT6PSE9sej4wnV" data-order="7"
+         data-title="Coqueta" data-color="#6a4c93,#2e1a4d" data-phrase="Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+          <div class="record-title">Coqueta</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3iTVjevexCuVrBwmkR4qJc"
-         data-title="fantasmas" data-artist="" data-color="#c9184a,#560318" data-phrase="En esta casa no existen fantasmas, son puros recuerdos">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
-      <div class="record-title">fantasmas</div>
-      <div class="record-note">"En esta casa no existen fantasmas, son puros recuerdos"</div>
+         data-track-id="3iTVjevexCuVrBwmkR4qJc" data-order="5"
+         data-title="fantasmas" data-color="#c9184a,#560318" data-phrase="En esta casa no existen fantasmas, son puros recuerdos">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+          <div class="record-title">fantasmas</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"En esta casa no existen fantasmas, son puros recuerdos"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="5fVKVwh4jHuDZVLEtVgOE8"
-         data-title="Tu si Eres Real" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="Ella ya es farola de una noche sumida tanto en la oscuridad">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
-      <div class="record-title">Tu si Eres Real</div>
-      <div class="record-note">"Ella ya es farola de una noche sumida tanto en la oscuridad"</div>
+         data-track-id="5fVKVwh4jHuDZVLEtVgOE8" data-order="58"
+         data-title="Tu si Eres Real" data-color="#3a5bd9,#0d1b3e" data-phrase="Ella ya es farola de una noche sumida tanto en la oscuridad">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+          <div class="record-title">Tu si Eres Real</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Ella ya es farola de una noche sumida tanto en la oscuridad"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3Gs7mVfWKl567mjozgxmXv"
-         data-title="Niña bonita" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="Toma mi mano solo una noche, ya no te sientas solita">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
-      <div class="record-title">Niña bonita</div>
-      <div class="record-note">"Toma mi mano solo una noche, ya no te sientas solita"</div>
+         data-track-id="3Gs7mVfWKl567mjozgxmXv" data-order="12"
+         data-title="Niña bonita" data-color="#ff8fa3,#8c0a20" data-phrase="Toma mi mano solo una noche, ya no te sientas solita">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+          <div class="record-title">Niña bonita</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Toma mi mano solo una noche, ya no te sientas solita"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1nGoy0cEj0extAwXYNYTWd"
-         data-title="Wouldn&#x27;t Leave" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="Sé que ella no lo haría">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
-      <div class="record-title">Wouldn&#x27;t Leave</div>
-      <div class="record-note">"Sé que ella no lo haría"</div>
+         data-track-id="1nGoy0cEj0extAwXYNYTWd" data-order="48"
+         data-title="Wouldn&#x27;t Leave" data-color="#2a9d8f,#0e3d38" data-phrase="Sé que ella no lo haría">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+          <div class="record-title">Wouldn&#x27;t Leave</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Sé que ella no lo haría"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="5GUYJTQap5F3RDQiCOJhrS"
-         data-title="Self Control" data-artist="" data-color="#f4a261,#8a4a1c" data-phrase="I will be the boyfriend in your wet dreams tonight">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
-      <div class="record-title">Self Control</div>
-      <div class="record-note">"I will be the boyfriend in your wet dreams tonight"</div>
+         data-track-id="5GUYJTQap5F3RDQiCOJhrS" data-order="34"
+         data-title="Self Control" data-color="#f4a261,#8a4a1c" data-phrase="I will be the boyfriend in your wet dreams tonight">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
+          <div class="record-title">Self Control</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I will be the boyfriend in your wet dreams tonight"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3xo4Q43ei0ypZOvd2W1IqZ"
-         data-title="Like you do" data-artist="" data-color="#8338ec,#3a1470" data-phrase="If you ever go, all the songs that we like, will sound like bittersweet lullabies">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
-      <div class="record-title">Like you do</div>
-      <div class="record-note">"If you ever go, all the songs that we like, will sound like bittersweet lullabies"</div>
+         data-track-id="3xo4Q43ei0ypZOvd2W1IqZ" data-order="29"
+         data-title="Like you do" data-color="#8338ec,#3a1470" data-phrase="If you ever go, all the songs that we like, will sound like bittersweet lullabies">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
+          <div class="record-title">Like you do</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"If you ever go, all the songs that we like, will sound like bittersweet lullabies"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="73R3ZGNODH8sl1oRtdGVl1"
-         data-title="y como te digo que" data-artist="" data-color="#e76f51,#7a2e0f" data-phrase="Cómo te digo que me aliviaste, un daño que tú no causaste">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
-      <div class="record-title">y como te digo que</div>
-      <div class="record-note">"Cómo te digo que me aliviaste, un daño que tú no causaste"</div>
+         data-track-id="73R3ZGNODH8sl1oRtdGVl1" data-order="59"
+         data-title="y como te digo que" data-color="#e76f51,#7a2e0f" data-phrase="Cómo te digo que me aliviaste, un daño que tú no causaste">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
+          <div class="record-title">y como te digo que</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Cómo te digo que me aliviaste, un daño que tú no causaste"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4WefXOf8I4gMjdj2kBJgkl"
-         data-title="Patadas de ahogado" data-artist="" data-color="#457b9d,#1d3557" data-phrase="Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato.">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
-      <div class="record-title">Patadas de ahogado</div>
-      <div class="record-note">"Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato."</div>
+         data-track-id="4WefXOf8I4gMjdj2kBJgkl" data-order="1"
+         data-title="Patadas de ahogado" data-color="#457b9d,#1d3557" data-phrase="Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato.">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
+          <div class="record-title">Patadas de ahogado</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato."</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3sNVsP50132BTNlImLx70i"
-         data-title="Bound 2" data-artist="" data-color="#f77f00,#8a4300" data-phrase="Bound to fall in love">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
-      <div class="record-title">Bound 2</div>
-      <div class="record-note">"Bound to fall in love"</div>
+         data-track-id="3sNVsP50132BTNlImLx70i" data-order="20"
+         data-title="Bound 2" data-color="#f77f00,#8a4300" data-phrase="Bound to fall in love">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
+          <div class="record-title">Bound 2</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Bound to fall in love"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="0FDzzruyVECATHXKHFs9eJ"
-         data-title="A Sky Full of Stars" data-artist="" data-color="#9d4edd,#3c096c" data-phrase="Te daré mi corazón, no me importa, adelante, despedázame">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
-      <div class="record-title">A Sky Full of Stars</div>
-      <div class="record-note">"Te daré mi corazón, no me importa, adelante, despedázame"</div>
+         data-track-id="0FDzzruyVECATHXKHFs9eJ" data-order="47"
+         data-title="A Sky Full of Stars" data-color="#9d4edd,#3c096c" data-phrase="Te daré mi corazón, no me importa, adelante, despedázame">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
+          <div class="record-title">A Sky Full of Stars</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Te daré mi corazón, no me importa, adelante, despedázame"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="5QjmUqgpPQgXgg4606DqZF"
-         data-title="UWAIE" data-artist="" data-color="#e63946,#8c0a20" data-phrase="Siéntate y piensa en algo, y quiero ser ese algo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
-      <div class="record-title">UWAIE</div>
-      <div class="record-note">"Siéntate y piensa en algo, y quiero ser ese algo"</div>
+         data-track-id="5QjmUqgpPQgXgg4606DqZF" data-order="45"
+         data-title="UWAIE" data-color="#e63946,#8c0a20" data-phrase="Siéntate y piensa en algo, y quiero ser ese algo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+          <div class="record-title">UWAIE</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Siéntate y piensa en algo, y quiero ser ese algo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="388jD8ko9cvFM9cd9TYDrl"
-         data-title="ROS" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Sólo quería hacerte una pregunta, eh, ¿te has enamorado alguna vez?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
-      <div class="record-title">ROS</div>
-      <div class="record-note">"Sólo quería hacerte una pregunta, eh, ¿te has enamorado alguna vez?"</div>
+         data-track-id="388jD8ko9cvFM9cd9TYDrl" data-order="25"
+         data-title="ROS" data-color="#1a2f6b,#0d1b3e" data-phrase="Sólo quería hacerte una pregunta, eh, ¿te has enamorado alguna vez?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+          <div class="record-title">ROS</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Sólo quería hacerte una pregunta, eh, ¿te has enamorado alguna vez?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4TFNKnMWjcMWzpkSwQrrcu"
-         data-title="Le Pido a DIOS" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
-      <div class="record-title">Le Pido a DIOS</div>
-      <div class="record-note">"Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda"</div>
+         data-track-id="4TFNKnMWjcMWzpkSwQrrcu" data-order="10"
+         data-title="Le Pido a DIOS" data-color="#d4a017,#8a6708" data-phrase="Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+          <div class="record-title">Le Pido a DIOS</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="7sIx70dGj3VBiHWr0KZXfD"
-         data-title="Blondie" data-artist="" data-color="#1db954,#0f5c30" data-phrase="¿Podemos bailar?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
-      <div class="record-title">Blondie</div>
-      <div class="record-note">"¿Podemos bailar?"</div>
+         data-track-id="7sIx70dGj3VBiHWr0KZXfD" data-order="36"
+         data-title="Blondie" data-color="#1db954,#0f5c30" data-phrase="¿Podemos bailar?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+          <div class="record-title">Blondie</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"¿Podemos bailar?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4wtWL0UV8tCPv9VbUMLXYP"
-         data-title="No digas nada" data-artist="" data-color="#7d1128,#3a0512" data-phrase="¿Molestar en abrazarme? Créeme no es molestia, va a sanarme">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
-      <div class="record-title">No digas nada</div>
-      <div class="record-note">"¿Molestar en abrazarme? Créeme no es molestia, va a sanarme"</div>
+         data-track-id="4wtWL0UV8tCPv9VbUMLXYP" data-order="4"
+         data-title="No digas nada" data-color="#7d1128,#3a0512" data-phrase="¿Molestar en abrazarme? Créeme no es molestia, va a sanarme">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+          <div class="record-title">No digas nada</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"¿Molestar en abrazarme? Créeme no es molestia, va a sanarme"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1xP2jdihnPfoqPNVHHhKnm"
-         data-title="quiero sentirme bien" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="Is there any kind of lovin&#x27; that&#x27;ll make this all right?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
-      <div class="record-title">quiero sentirme bien</div>
-      <div class="record-note">"Is there any kind of lovin&#x27; that&#x27;ll make this all right?"</div>
+         data-track-id="1xP2jdihnPfoqPNVHHhKnm" data-order="49"
+         data-title="quiero sentirme bien" data-color="#6a4c93,#2e1a4d" data-phrase="Is there any kind of lovin&#x27; that&#x27;ll make this all right?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+          <div class="record-title">quiero sentirme bien</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Is there any kind of lovin&#x27; that&#x27;ll make this all right?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="41oY4WCTj5kccfesTVFnvN"
-         data-title="Tarot" data-artist="" data-color="#c9184a,#560318" data-phrase="Yo soy Da Vinci y tú mi obra de arte. Tú eres arte">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
-      <div class="record-title">Tarot</div>
-      <div class="record-note">"Yo soy Da Vinci y tú mi obra de arte. Tú eres arte"</div>
+         data-track-id="41oY4WCTj5kccfesTVFnvN" data-order="11"
+         data-title="Tarot" data-color="#c9184a,#560318" data-phrase="Yo soy Da Vinci y tú mi obra de arte. Tú eres arte">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+          <div class="record-title">Tarot</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Yo soy Da Vinci y tú mi obra de arte. Tú eres arte"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="0v9UztY5A12cJUsWD7PZzS"
-         data-title="AMOR DE CINE" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
-      <div class="record-title">AMOR DE CINE</div>
-      <div class="record-note">"Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes"</div>
+         data-track-id="0v9UztY5A12cJUsWD7PZzS" data-order="2"
+         data-title="AMOR DE CINE" data-color="#3a5bd9,#0d1b3e" data-phrase="Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+          <div class="record-title">AMOR DE CINE</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="5fF0fb0VFihGDHFshDLi2Z"
-         data-title="Mi bendición" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="Decirte un te quiero al oído, yo te lo digo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
-      <div class="record-title">Mi bendición</div>
-      <div class="record-note">"Decirte un te quiero al oído, yo te lo digo"</div>
+         data-track-id="5fF0fb0VFihGDHFshDLi2Z" data-order="53"
+         data-title="Mi bendición" data-color="#ff8fa3,#8c0a20" data-phrase="Decirte un te quiero al oído, yo te lo digo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+          <div class="record-title">Mi bendición</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Decirte un te quiero al oído, yo te lo digo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="7DfFc7a6Rwfi3YQMRbDMau"
-         data-title="Thinkin bout you" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="I&#x27;ve been thinkin bout you, do you think about me still?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
-      <div class="record-title">Thinkin bout you</div>
-      <div class="record-note">"I&#x27;ve been thinkin bout you, do you think about me still?"</div>
+         data-track-id="7DfFc7a6Rwfi3YQMRbDMau" data-order="22"
+         data-title="Thinkin bout you" data-color="#2a9d8f,#0e3d38" data-phrase="I&#x27;ve been thinkin bout you, do you think about me still?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+          <div class="record-title">Thinkin bout you</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I&#x27;ve been thinkin bout you, do you think about me still?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="44XjoNvtwevktFKjvVe1vH"
-         data-title="Andrea" data-artist="" data-color="#f4a261,#8a4a1c" data-phrase="Lo malo siempre se sabe y lo bueno nunca se cuenta">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
-      <div class="record-title">Andrea</div>
-      <div class="record-note">"Lo malo siempre se sabe y lo bueno nunca se cuenta"</div>
+         data-track-id="44XjoNvtwevktFKjvVe1vH" data-order="13"
+         data-title="Andrea" data-color="#f4a261,#8a4a1c" data-phrase="Lo malo siempre se sabe y lo bueno nunca se cuenta">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
+          <div class="record-title">Andrea</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Lo malo siempre se sabe y lo bueno nunca se cuenta"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="5XeFesFbtLpXzIVDNQP22n"
-         data-title="I wanna be yours" data-artist="" data-color="#8338ec,#3a1470" data-phrase="Maybe, I just wanna be yours">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
-      <div class="record-title">I wanna be yours</div>
-      <div class="record-note">"Maybe, I just wanna be yours"</div>
+         data-track-id="5XeFesFbtLpXzIVDNQP22n" data-order="30"
+         data-title="I wanna be yours" data-color="#8338ec,#3a1470" data-phrase="Maybe, I just wanna be yours">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #8338ec, #3a1470);">💿</div>
+          <div class="record-title">I wanna be yours</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Maybe, I just wanna be yours"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="4k5UZm89ZX0YAHUp55zpt9"
-         data-title="WE" data-artist="" data-color="#e76f51,#7a2e0f" data-phrase="I&#x27;m in love with the way that you say my name">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
-      <div class="record-title">WE</div>
-      <div class="record-note">"I&#x27;m in love with the way that you say my name"</div>
+         data-track-id="4k5UZm89ZX0YAHUp55zpt9" data-order="23"
+         data-title="WE" data-color="#e76f51,#7a2e0f" data-phrase="I&#x27;m in love with the way that you say my name">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e76f51, #7a2e0f);">💿</div>
+          <div class="record-title">WE</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I&#x27;m in love with the way that you say my name"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2DEZmgHKAvm41k4J3R2E9Y"
-         data-title="Safaera" data-artist="" data-color="#457b9d,#1d3557" data-phrase="Mirá que safaera">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
-      <div class="record-title">Safaera</div>
-      <div class="record-note">"Mirá que safaera"</div>
+         data-track-id="2DEZmgHKAvm41k4J3R2E9Y" data-order="14"
+         data-title="Safaera" data-color="#457b9d,#1d3557" data-phrase="Mirá que safaera">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #457b9d, #1d3557);">💿</div>
+          <div class="record-title">Safaera</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Mirá que safaera"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1C3kTwvBsskFSdL95gXHej"
-         data-title="DESDE QUE TE FUISTE" data-artist="" data-color="#f77f00,#8a4300" data-phrase="Al menos quédate una luna más">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
-      <div class="record-title">DESDE QUE TE FUISTE</div>
-      <div class="record-note">"Al menos quédate una luna más"</div>
+         data-track-id="1C3kTwvBsskFSdL95gXHej" data-order="9"
+         data-title="DESDE QUE TE FUISTE" data-color="#f77f00,#8a4300" data-phrase="Al menos quédate una luna más">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f77f00, #8a4300);">💿</div>
+          <div class="record-title">DESDE QUE TE FUISTE</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Al menos quédate una luna más"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3zksbXteOCeSusJ5Xltr3t"
-         data-title="Bubble gum" data-artist="" data-color="#9d4edd,#3c096c" data-phrase="I&#x27;d do anything for you, but would you do that for me too?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
-      <div class="record-title">Bubble gum</div>
-      <div class="record-note">"I&#x27;d do anything for you, but would you do that for me too?"</div>
+         data-track-id="3zksbXteOCeSusJ5Xltr3t" data-order="42"
+         data-title="Bubble gum" data-color="#9d4edd,#3c096c" data-phrase="I&#x27;d do anything for you, but would you do that for me too?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #9d4edd, #3c096c);">💿</div>
+          <div class="record-title">Bubble gum</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"I&#x27;d do anything for you, but would you do that for me too?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="79EkGysjP2dL5GdpeQjRxT"
-         data-title="This side of paradise" data-artist="" data-color="#e63946,#8c0a20" data-phrase="Si estás sola, ven a estar sola conmigo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
-      <div class="record-title">This side of paradise</div>
-      <div class="record-note">"Si estás sola, ven a estar sola conmigo"</div>
+         data-track-id="79EkGysjP2dL5GdpeQjRxT" data-order="43"
+         data-title="This side of paradise" data-color="#e63946,#8c0a20" data-phrase="Si estás sola, ven a estar sola conmigo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #e63946, #8c0a20);">💿</div>
+          <div class="record-title">This side of paradise</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Si estás sola, ven a estar sola conmigo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="0yc6Gst2xkRu0eMLeRMGCX"
-         data-title="Apocalypse" data-artist="" data-color="#1a2f6b,#0d1b3e" data-phrase="Oh, when you&#x27;re all alone, I will reach for you, when you&#x27;re feeling low, I will be there too">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
-      <div class="record-title">Apocalypse</div>
-      <div class="record-note">"Oh, when you&#x27;re all alone, I will reach for you, when you&#x27;re feeling low, I will be there too"</div>
+         data-track-id="0yc6Gst2xkRu0eMLeRMGCX" data-order="46"
+         data-title="Apocalypse" data-color="#1a2f6b,#0d1b3e" data-phrase="Oh, when you&#x27;re all alone, I will reach for you, when you&#x27;re feeling low, I will be there too">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1a2f6b, #0d1b3e);">💿</div>
+          <div class="record-title">Apocalypse</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Oh, when you&#x27;re all alone, I will reach for you, when you&#x27;re feeling low, I will be there too"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6aommJFM8i3iT4inKuDSXh"
-         data-title="Chachachá" data-artist="" data-color="#d4a017,#8a6708" data-phrase="Dame de tu vida y de tu tiempo">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
-      <div class="record-title">Chachachá</div>
-      <div class="record-note">"Dame de tu vida y de tu tiempo"</div>
+         data-track-id="6aommJFM8i3iT4inKuDSXh" data-order="55"
+         data-title="Chachachá" data-color="#d4a017,#8a6708" data-phrase="Dame de tu vida y de tu tiempo">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #d4a017, #8a6708);">💿</div>
+          <div class="record-title">Chachachá</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Dame de tu vida y de tu tiempo"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6AxMX4W9tasxIIf3degsCd"
-         data-title="Piel Canela" data-artist="" data-color="#1db954,#0f5c30" data-phrase="Si perdiera el arcoíris su belleza y las flores su perfume y su color, no sería tan inmensa mi tristeza">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
-      <div class="record-title">Piel Canela</div>
-      <div class="record-note">"Si perdiera el arcoíris su belleza y las flores su perfume y su color, no sería tan inmensa mi tristeza"</div>
+         data-track-id="6AxMX4W9tasxIIf3degsCd" data-order="52"
+         data-title="Piel Canela" data-color="#1db954,#0f5c30" data-phrase="Si perdiera el arcoíris su belleza y las flores su perfume y su color, no sería tan inmensa mi tristeza">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #1db954, #0f5c30);">💿</div>
+          <div class="record-title">Piel Canela</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Si perdiera el arcoíris su belleza y las flores su perfume y su color, no sería tan inmensa mi tristeza"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2HSmyk2qMN8WQjuGhaQgCk"
-         data-title="Champagne Poetry" data-artist="" data-color="#7d1128,#3a0512" data-phrase="Te amo, te amo, te amo, I need you, I need you">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
-      <div class="record-title">Champagne Poetry</div>
-      <div class="record-note">"Te amo, te amo, te amo, I need you, I need you"</div>
+         data-track-id="2HSmyk2qMN8WQjuGhaQgCk" data-order="33"
+         data-title="Champagne Poetry" data-color="#7d1128,#3a0512" data-phrase="Te amo, te amo, te amo, I need you, I need you">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #7d1128, #3a0512);">💿</div>
+          <div class="record-title">Champagne Poetry</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Te amo, te amo, te amo, I need you, I need you"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="2ONADYjJvqYVwjWavuY0H1"
-         data-title="ALMA DINAMITA" data-artist="" data-color="#6a4c93,#2e1a4d" data-phrase="Me gusta todo lo que sos y un poco más">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
-      <div class="record-title">ALMA DINAMITA</div>
-      <div class="record-note">"Me gusta todo lo que sos y un poco más"</div>
+         data-track-id="2ONADYjJvqYVwjWavuY0H1" data-order="17"
+         data-title="ALMA DINAMITA" data-color="#6a4c93,#2e1a4d" data-phrase="Me gusta todo lo que sos y un poco más">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #6a4c93, #2e1a4d);">💿</div>
+          <div class="record-title">ALMA DINAMITA</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Me gusta todo lo que sos y un poco más"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="7eqoqGkKwgOaWNNHx90uEZ"
-         data-title="Nights" data-artist="" data-color="#c9184a,#560318" data-phrase="Get some gushy, have a calm night">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
-      <div class="record-title">Nights</div>
-      <div class="record-note">"Get some gushy, have a calm night"</div>
+         data-track-id="7eqoqGkKwgOaWNNHx90uEZ" data-order="50"
+         data-title="Nights" data-color="#c9184a,#560318" data-phrase="Get some gushy, have a calm night">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #c9184a, #560318);">💿</div>
+          <div class="record-title">Nights</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Get some gushy, have a calm night"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="45rpQzLQWofg1S8ULBuEVk"
-         data-title="15" data-artist="" data-color="#3a5bd9,#0d1b3e" data-phrase="May I write you a song? We could sing along and fall in love">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
-      <div class="record-title">15</div>
-      <div class="record-note">"May I write you a song? We could sing along and fall in love"</div>
+         data-track-id="45rpQzLQWofg1S8ULBuEVk" data-order="37"
+         data-title="15" data-color="#3a5bd9,#0d1b3e" data-phrase="May I write you a song? We could sing along and fall in love">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #3a5bd9, #0d1b3e);">💿</div>
+          <div class="record-title">15</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"May I write you a song? We could sing along and fall in love"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="6FvMc0dfKvSbzFmqfT1GoG"
-         data-title="TQMQA" data-artist="" data-color="#ff8fa3,#8c0a20" data-phrase="Te quiero más que ayer y mucho menos que mañana">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
-      <div class="record-title">TQMQA</div>
-      <div class="record-note">"Te quiero más que ayer y mucho menos que mañana"</div>
+         data-track-id="6FvMc0dfKvSbzFmqfT1GoG" data-order="19"
+         data-title="TQMQA" data-color="#ff8fa3,#8c0a20" data-phrase="Te quiero más que ayer y mucho menos que mañana">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #ff8fa3, #8c0a20);">💿</div>
+          <div class="record-title">TQMQA</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Te quiero más que ayer y mucho menos que mañana"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="1kwnxJNVl7cwcU98RvMBaR"
-         data-title="Surf" data-artist="" data-color="#2a9d8f,#0e3d38" data-phrase="Where are you goin&#x27;? Can I come too?">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
-      <div class="record-title">Surf</div>
-      <div class="record-note">"Where are you goin&#x27;? Can I come too?"</div>
+         data-track-id="1kwnxJNVl7cwcU98RvMBaR" data-order="31"
+         data-title="Surf" data-color="#2a9d8f,#0e3d38" data-phrase="Where are you goin&#x27;? Can I come too?">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #2a9d8f, #0e3d38);">💿</div>
+          <div class="record-title">Surf</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Where are you goin&#x27;? Can I come too?"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <div class="record-card"
-         data-track-id="3fgScn3fp098tqIVgVosd5"
-         data-title="Llora Llora" data-artist="" data-color="#f4a261,#8a4a1c" data-phrase="Sigo abrazando esas cosas que me dices">
-      <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
-      <div class="record-title">Llora Llora</div>
-      <div class="record-note">"Sigo abrazando esas cosas que me dices"</div>
+         data-track-id="3fgScn3fp098tqIVgVosd5" data-order="56"
+         data-title="Llora Llora" data-color="#f4a261,#8a4a1c" data-phrase="Sigo abrazando esas cosas que me dices">
+      <div class="card-shadow"></div>
+      <div class="vinyl-peek"></div>
+      <div class="tilt-wrap">
+      <div class="card-flip">
+        <div class="card-face card-front">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-sleeve" style="--sleeve-color: linear-gradient(135deg, #f4a261, #8a4a1c);">💿</div>
+          <div class="record-title">Llora Llora</div>
+        </div>
+        <div class="card-face card-back">
+          <button class="flip-btn" type="button" aria-label="Voltear disco" onclick="event.stopPropagation(); flipCard(this)">⟳</button>
+          <div class="record-note">"Sigo abrazando esas cosas que me dices"</div>
+          <button class="back-play-btn" type="button" onclick="event.stopPropagation(); playFromBack(this)">▶ Reproducir</button>
+        </div>
+      </div>
+      </div>
     </div>
   </div>
 
@@ -959,6 +2088,495 @@
     <a class="back-link" href="index.html">← Volver a nuestra carta</a>
   </div>
 
+</div>
+
+<!-- overlay del mixtape -->
+<div class="mixtape-overlay" id="mixtapeOverlay">
+  <div class="mixtape-panel">
+    <div class="mixtape-panel-header">
+      <div class="mixtape-panel-title">El Mixtape 🎼</div>
+      <button class="mixtape-close" id="mixtapeCloseBtn" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="mixtape-progress" id="mixtapeProgress">Pista 1 de 59</div>
+    <ul class="mixtape-list" id="mixtapeList">
+      <li class="mix-item" data-track-id="4WefXOf8I4gMjdj2kBJgkl" data-order="1">
+        <span class="mix-num">1</span>
+        <span class="mix-info">
+          <span class="mix-title">Patadas de ahogado</span>
+          <span class="mix-phrase">"Llevaba tiempo buscando a quién cantarle. Sobre cuando me siento vulnerable, dale, abrázame otro rato."</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="0v9UztY5A12cJUsWD7PZzS" data-order="2">
+        <span class="mix-num">2</span>
+        <span class="mix-info">
+          <span class="mix-title">AMOR DE CINE</span>
+          <span class="mix-phrase">"Ay, mi amor, ya no estés triste. Yo te doy todo el tiempo que tú necesites, sean horas, cientas, miles. Contigo no hay canciones tristes"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1SZ36sAVA9Xy8XKFsCW51J" data-order="3">
+        <span class="mix-num">3</span>
+        <span class="mix-info">
+          <span class="mix-title">novatos</span>
+          <span class="mix-phrase">"Obsesionado, tanto que quiero pedir por tu mano, vernos casados, agarrados en el vals"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4wtWL0UV8tCPv9VbUMLXYP" data-order="4">
+        <span class="mix-num">4</span>
+        <span class="mix-info">
+          <span class="mix-title">No digas nada</span>
+          <span class="mix-phrase">"¿Molestar en abrazarme? Créeme no es molestia, va a sanarme"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3iTVjevexCuVrBwmkR4qJc" data-order="5">
+        <span class="mix-num">5</span>
+        <span class="mix-info">
+          <span class="mix-title">fantasmas</span>
+          <span class="mix-phrase">"En esta casa no existen fantasmas, son puros recuerdos"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4t46soaqA758rbukTO5pp1" data-order="6">
+        <span class="mix-num">6</span>
+        <span class="mix-info">
+          <span class="mix-title">Mi bello Ángel</span>
+          <span class="mix-phrase">"Tú, mi bello ángel que cayó del cielo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1PREzVLuDT6PSE9sej4wnV" data-order="7">
+        <span class="mix-num">7</span>
+        <span class="mix-info">
+          <span class="mix-title">Coqueta</span>
+          <span class="mix-phrase">"Quiero que vuelvas a mis brazos para sentirnos eternos como la última vez"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6TBzRwnX2oYd8aOrOuyK1p" data-order="8">
+        <span class="mix-num">8</span>
+        <span class="mix-info">
+          <span class="mix-title">Fin de Semana</span>
+          <span class="mix-phrase">"Con mis intenciones, te lo juro que te amo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1C3kTwvBsskFSdL95gXHej" data-order="9">
+        <span class="mix-num">9</span>
+        <span class="mix-info">
+          <span class="mix-title">DESDE QUE TE FUISTE</span>
+          <span class="mix-phrase">"Al menos quédate una luna más"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4TFNKnMWjcMWzpkSwQrrcu" data-order="10">
+        <span class="mix-num">10</span>
+        <span class="mix-info">
+          <span class="mix-title">Le Pido a DIOS</span>
+          <span class="mix-phrase">"Si me voy mañana, acuérdate que tu sonrisa, bebé, es la más linda"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="41oY4WCTj5kccfesTVFnvN" data-order="11">
+        <span class="mix-num">11</span>
+        <span class="mix-info">
+          <span class="mix-title">Tarot</span>
+          <span class="mix-phrase">"Yo soy Da Vinci y tú mi obra de arte. Tú eres arte"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3Gs7mVfWKl567mjozgxmXv" data-order="12">
+        <span class="mix-num">12</span>
+        <span class="mix-info">
+          <span class="mix-title">Niña bonita</span>
+          <span class="mix-phrase">"Toma mi mano solo una noche, ya no te sientas solita"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="44XjoNvtwevktFKjvVe1vH" data-order="13">
+        <span class="mix-num">13</span>
+        <span class="mix-info">
+          <span class="mix-title">Andrea</span>
+          <span class="mix-phrase">"Lo malo siempre se sabe y lo bueno nunca se cuenta"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2DEZmgHKAvm41k4J3R2E9Y" data-order="14">
+        <span class="mix-num">14</span>
+        <span class="mix-info">
+          <span class="mix-title">Safaera</span>
+          <span class="mix-phrase">"Mirá que safaera"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1Sym1HsTqsa2pYKhYL1j15" data-order="15">
+        <span class="mix-num">15</span>
+        <span class="mix-info">
+          <span class="mix-title">Me gustas natural</span>
+          <span class="mix-phrase">"Me gustas natural, acabada de levantar sin maquillar"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4GKm1QaEr1tqJwUM0EsUl3" data-order="16">
+        <span class="mix-num">16</span>
+        <span class="mix-info">
+          <span class="mix-title">Ama De Mi Sol</span>
+          <span class="mix-phrase">"Hay un paraíso en tu corazón, tu risa me guiará"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2ONADYjJvqYVwjWavuY0H1" data-order="17">
+        <span class="mix-num">17</span>
+        <span class="mix-info">
+          <span class="mix-title">ALMA DINAMITA</span>
+          <span class="mix-phrase">"Me gusta todo lo que sos y un poco más"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2GNjjWYymmIS8HEC4Xp2eu" data-order="18">
+        <span class="mix-num">18</span>
+        <span class="mix-info">
+          <span class="mix-title">ARRANCÁRMELO</span>
+          <span class="mix-phrase">"¿Cómo van a convencerme de que la magia no existe?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6FvMc0dfKvSbzFmqfT1GoG" data-order="19">
+        <span class="mix-num">19</span>
+        <span class="mix-info">
+          <span class="mix-title">TQMQA</span>
+          <span class="mix-phrase">"Te quiero más que ayer y mucho menos que mañana"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3sNVsP50132BTNlImLx70i" data-order="20">
+        <span class="mix-num">20</span>
+        <span class="mix-info">
+          <span class="mix-title">Bound 2</span>
+          <span class="mix-phrase">"Bound to fall in love"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1PDP7mLiAMwhfmgIwzhOm2" data-order="21">
+        <span class="mix-num">21</span>
+        <span class="mix-info">
+          <span class="mix-title">Yebba&#x27;s Heartbreak</span>
+          <span class="mix-phrase">"Can I show my love for you?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="7DfFc7a6Rwfi3YQMRbDMau" data-order="22">
+        <span class="mix-num">22</span>
+        <span class="mix-info">
+          <span class="mix-title">Thinkin bout you</span>
+          <span class="mix-phrase">"I&#x27;ve been thinkin bout you, do you think about me still?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4k5UZm89ZX0YAHUp55zpt9" data-order="23">
+        <span class="mix-num">23</span>
+        <span class="mix-info">
+          <span class="mix-title">WE</span>
+          <span class="mix-phrase">"I&#x27;m in love with the way that you say my name"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2z9iuAxKv4TTeCrPAxxKg9" data-order="24">
+        <span class="mix-num">24</span>
+        <span class="mix-info">
+          <span class="mix-title">Love lost</span>
+          <span class="mix-phrase">"How the hell you make me fall in love with you?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="388jD8ko9cvFM9cd9TYDrl" data-order="25">
+        <span class="mix-num">25</span>
+        <span class="mix-info">
+          <span class="mix-title">ROS</span>
+          <span class="mix-phrase">"Sólo quería hacerte una pregunta, eh, ¿te has enamorado alguna vez?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="7KA4W4McWYRpgf0fWsJZWB" data-order="26">
+        <span class="mix-num">26</span>
+        <span class="mix-info">
+          <span class="mix-title">See You Again</span>
+          <span class="mix-phrase">"¿Me das un beso? ¿Y podrías hacer que dure para siempre?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3DarAbFujv6eYNliUTyqtz" data-order="27">
+        <span class="mix-num">27</span>
+        <span class="mix-info">
+          <span class="mix-title">Kiss Me More</span>
+          <span class="mix-phrase">"Can you kiss me more?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2i2gDpKKWjvnRTOZRhaPh2" data-order="28">
+        <span class="mix-num">28</span>
+        <span class="mix-info">
+          <span class="mix-title">Moonlight</span>
+          <span class="mix-phrase">"I just wanna get high with my lover"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3xo4Q43ei0ypZOvd2W1IqZ" data-order="29">
+        <span class="mix-num">29</span>
+        <span class="mix-info">
+          <span class="mix-title">Like you do</span>
+          <span class="mix-phrase">"If you ever go, all the songs that we like, will sound like bittersweet lullabies"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="5XeFesFbtLpXzIVDNQP22n" data-order="30">
+        <span class="mix-num">30</span>
+        <span class="mix-info">
+          <span class="mix-title">I wanna be yours</span>
+          <span class="mix-phrase">"Maybe, I just wanna be yours"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1kwnxJNVl7cwcU98RvMBaR" data-order="31">
+        <span class="mix-num">31</span>
+        <span class="mix-info">
+          <span class="mix-title">Surf</span>
+          <span class="mix-phrase">"Where are you goin&#x27;? Can I come too?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="66wkCYWlXzSTQAfnsPBptt" data-order="32">
+        <span class="mix-num">32</span>
+        <span class="mix-info">
+          <span class="mix-title">My favorite part</span>
+          <span class="mix-phrase">"This life can be so hard, I&#x27;d rather talk about you"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2HSmyk2qMN8WQjuGhaQgCk" data-order="33">
+        <span class="mix-num">33</span>
+        <span class="mix-info">
+          <span class="mix-title">Champagne Poetry</span>
+          <span class="mix-phrase">"Te amo, te amo, te amo, I need you, I need you"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="5GUYJTQap5F3RDQiCOJhrS" data-order="34">
+        <span class="mix-num">34</span>
+        <span class="mix-info">
+          <span class="mix-title">Self Control</span>
+          <span class="mix-phrase">"I will be the boyfriend in your wet dreams tonight"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="2LMkwUfqC6S6s6qDVlEuzV" data-order="35">
+        <span class="mix-num">35</span>
+        <span class="mix-info">
+          <span class="mix-title">White Ferrari</span>
+          <span class="mix-phrase">"Stick by me, close by me"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="7sIx70dGj3VBiHWr0KZXfD" data-order="36">
+        <span class="mix-num">36</span>
+        <span class="mix-info">
+          <span class="mix-title">Blondie</span>
+          <span class="mix-phrase">"¿Podemos bailar?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="45rpQzLQWofg1S8ULBuEVk" data-order="37">
+        <span class="mix-num">37</span>
+        <span class="mix-info">
+          <span class="mix-title">15</span>
+          <span class="mix-phrase">"May I write you a song? We could sing along and fall in love"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="19a3JfW8BQwqHWUMbcqSx8" data-order="38">
+        <span class="mix-num">38</span>
+        <span class="mix-info">
+          <span class="mix-title">Famous</span>
+          <span class="mix-phrase">"Jajajajaj"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3XrPM65ihtm4ZkZNGt30Ff" data-order="39">
+        <span class="mix-num">39</span>
+        <span class="mix-info">
+          <span class="mix-title">Contigo</span>
+          <span class="mix-phrase">"Te puedo yo jurar ante un altar mi amor sincero"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6q4zA7hWKFF6wsJ64DWdwU" data-order="40">
+        <span class="mix-num">40</span>
+        <span class="mix-info">
+          <span class="mix-title">Amor de siempre</span>
+          <span class="mix-phrase">"Amorcito sonriente, entraste sin advertirme"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4KGGeE7RJsgLNZmnxGFlOj" data-order="41">
+        <span class="mix-num">41</span>
+        <span class="mix-info">
+          <span class="mix-title">Falling Behind</span>
+          <span class="mix-phrase">"I&#x27;ve never had a shoulder to cry on, someone to call mine"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3zksbXteOCeSusJ5Xltr3t" data-order="42">
+        <span class="mix-num">42</span>
+        <span class="mix-info">
+          <span class="mix-title">Bubble gum</span>
+          <span class="mix-phrase">"I&#x27;d do anything for you, but would you do that for me too?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="79EkGysjP2dL5GdpeQjRxT" data-order="43">
+        <span class="mix-num">43</span>
+        <span class="mix-info">
+          <span class="mix-title">This side of paradise</span>
+          <span class="mix-phrase">"Si estás sola, ven a estar sola conmigo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="0qXP5fMhxGzxALOkXYUxfP" data-order="44">
+        <span class="mix-num">44</span>
+        <span class="mix-info">
+          <span class="mix-title">Loverboy</span>
+          <span class="mix-phrase">"Now everybody wants to be like us, they&#x27;re getting jealous, feel it now"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="5QjmUqgpPQgXgg4606DqZF" data-order="45">
+        <span class="mix-num">45</span>
+        <span class="mix-info">
+          <span class="mix-title">UWAIE</span>
+          <span class="mix-phrase">"Siéntate y piensa en algo, y quiero ser ese algo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="0yc6Gst2xkRu0eMLeRMGCX" data-order="46">
+        <span class="mix-num">46</span>
+        <span class="mix-info">
+          <span class="mix-title">Apocalypse</span>
+          <span class="mix-phrase">"Oh, when you&#x27;re all alone, I will reach for you, when you&#x27;re feeling low, I will be there too"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="0FDzzruyVECATHXKHFs9eJ" data-order="47">
+        <span class="mix-num">47</span>
+        <span class="mix-info">
+          <span class="mix-title">A Sky Full of Stars</span>
+          <span class="mix-phrase">"Te daré mi corazón, no me importa, adelante, despedázame"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1nGoy0cEj0extAwXYNYTWd" data-order="48">
+        <span class="mix-num">48</span>
+        <span class="mix-info">
+          <span class="mix-title">Wouldn&#x27;t Leave</span>
+          <span class="mix-phrase">"Sé que ella no lo haría"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="1xP2jdihnPfoqPNVHHhKnm" data-order="49">
+        <span class="mix-num">49</span>
+        <span class="mix-info">
+          <span class="mix-title">quiero sentirme bien</span>
+          <span class="mix-phrase">"Is there any kind of lovin&#x27; that&#x27;ll make this all right?"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="7eqoqGkKwgOaWNNHx90uEZ" data-order="50">
+        <span class="mix-num">50</span>
+        <span class="mix-info">
+          <span class="mix-title">Nights</span>
+          <span class="mix-phrase">"Get some gushy, have a calm night"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="47DL8jY6HJD2mlCcTuOWKX" data-order="51">
+        <span class="mix-num">51</span>
+        <span class="mix-info">
+          <span class="mix-title">Contando Ovejas</span>
+          <span class="mix-phrase">"Siente que algo le falta que no nació completa, que nunca nadie supo cómo quererla de cerca"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6AxMX4W9tasxIIf3degsCd" data-order="52">
+        <span class="mix-num">52</span>
+        <span class="mix-info">
+          <span class="mix-title">Piel Canela</span>
+          <span class="mix-phrase">"Si perdiera el arcoíris su belleza y las flores su perfume y su color, no sería tan inmensa mi tristeza"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="5fF0fb0VFihGDHFshDLi2Z" data-order="53">
+        <span class="mix-num">53</span>
+        <span class="mix-info">
+          <span class="mix-title">Mi bendición</span>
+          <span class="mix-phrase">"Decirte un te quiero al oído, yo te lo digo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6kdCN6gTWLcLxmLXoUcwuI" data-order="54">
+        <span class="mix-num">54</span>
+        <span class="mix-info">
+          <span class="mix-title">Eres</span>
+          <span class="mix-phrase">"El que por ti daría la vida ese soy"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="6aommJFM8i3iT4inKuDSXh" data-order="55">
+        <span class="mix-num">55</span>
+        <span class="mix-info">
+          <span class="mix-title">Chachachá</span>
+          <span class="mix-phrase">"Dame de tu vida y de tu tiempo"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="3fgScn3fp098tqIVgVosd5" data-order="56">
+        <span class="mix-num">56</span>
+        <span class="mix-info">
+          <span class="mix-title">Llora Llora</span>
+          <span class="mix-phrase">"Sigo abrazando esas cosas que me dices"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="4DhTBCvoemYivBVHkk7RKI" data-order="57">
+        <span class="mix-num">57</span>
+        <span class="mix-info">
+          <span class="mix-title">Cafuné</span>
+          <span class="mix-phrase">"Si te fallo quiero que no me perdones"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="5fVKVwh4jHuDZVLEtVgOE8" data-order="58">
+        <span class="mix-num">58</span>
+        <span class="mix-info">
+          <span class="mix-title">Tu si Eres Real</span>
+          <span class="mix-phrase">"Ella ya es farola de una noche sumida tanto en la oscuridad"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+      <li class="mix-item" data-track-id="73R3ZGNODH8sl1oRtdGVl1" data-order="59">
+        <span class="mix-num">59</span>
+        <span class="mix-info">
+          <span class="mix-title">y como te digo que</span>
+          <span class="mix-phrase">"Cómo te digo que me aliviaste, un daño que tú no causaste"</span>
+        </span>
+        <span class="mix-check">✓</span>
+      </li>
+    </ul>
+    <div class="mixtape-controls">
+      <button class="mixtape-btn secondary" id="mixtapeRestartBtn">⏮ Reiniciar</button>
+      <button class="mixtape-btn primary" id="mixtapeNextBtn">▶ Reproducir pista</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -995,6 +2613,7 @@ document.addEventListener('DOMContentLoaded', function () {
       vinylLabel.style.setProperty('--record-color', c1);
       vinylLabel.style.setProperty('--record-color-dark', c2);
     }
+    vinyl.classList.remove('mixtape-spin');
     if(vinylLabelText) vinylLabelText.innerHTML = `${card.dataset.title}`;
 
     if(npArt) npArt.style.setProperty('--record-color2', `linear-gradient(135deg, ${c1}, ${c2})`);
@@ -1081,6 +2700,147 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   applyRecordVisual(selectedCard);
+
+  /* ===== voltear disco (cara A / cara B) ===== */
+  window.flipCard = function(btn){
+    const card = btn.closest('.record-card');
+    if(card) card.classList.toggle('flipped');
+  };
+
+  window.playFromBack = function(btn){
+    const card = btn.closest('.record-card');
+    if(!card) return;
+    selectRecord(card, true);
+  };
+
+  /* ===== inclinación 3D (parallax tilt) al pasar el mouse — solo en dispositivos con hover real ===== */
+  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(supportsHover){
+    crate.querySelectorAll('.record-card').forEach(card => {
+      const tiltWrap = card.querySelector('.tilt-wrap');
+      if(!tiltWrap) return;
+
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;   // 0..1
+        const py = (e.clientY - rect.top) / rect.height;   // 0..1
+        const maxTilt = 10;
+        const tiltY = (px - 0.5) * maxTilt * 2;
+        const tiltX = (0.5 - py) * maxTilt * 2;
+        tiltWrap.style.setProperty('--tilt-y', `${tiltY}deg`);
+        tiltWrap.style.setProperty('--tilt-x', `${tiltX}deg`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        tiltWrap.style.setProperty('--tilt-y', '0deg');
+        tiltWrap.style.setProperty('--tilt-x', '0deg');
+      });
+    });
+  }
+
+  /* ===== voltear con swipe (deslizar el dedo) en móvil, además del botón ⟳ ===== */
+  crate.querySelectorAll('.record-card').forEach(card => {
+    let touchStartX = 0, touchStartY = 0, touchMoved = false, isSwipe = false;
+    const SWIPE_THRESHOLD = 36;
+
+    card.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      if(!t) return;
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchMoved = false;
+      isSwipe = false;
+    }, { passive: true });
+
+    card.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if(!t) return;
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      if(Math.abs(dx) > 8 || Math.abs(dy) > 8) touchMoved = true;
+      if(Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)){
+        isSwipe = true;
+      }
+    }, { passive: true });
+
+    card.addEventListener('touchend', (e) => {
+      if(isSwipe){
+        card.classList.toggle('flipped');
+        e.preventDefault();
+      }
+    });
+  });
+
+  /* ===== MIXTAPE especial ===== */
+  const mixtapeOverlay = document.getElementById('mixtapeOverlay');
+  const mixtapeList = document.getElementById('mixtapeList');
+  const mixtapeProgress = document.getElementById('mixtapeProgress');
+  const mixtapeNextBtn = document.getElementById('mixtapeNextBtn');
+  const mixtapeRestartBtn = document.getElementById('mixtapeRestartBtn');
+  const mixtapeCloseBtn = document.getElementById('mixtapeCloseBtn');
+  const mixItems = mixtapeList ? Array.from(mixtapeList.querySelectorAll('.mix-item')) : [];
+  const totalTracks = mixItems.length;
+  let mixIndex = 0;
+
+  function renderMixState(){
+    if(!mixtapeProgress) return;
+    mixtapeProgress.textContent = `Pista ${mixIndex + 1} de ${totalTracks}`;
+    mixItems.forEach((item, i) => {
+      item.classList.toggle('mix-current', i === mixIndex);
+      item.classList.toggle('mix-played', i < mixIndex);
+    });
+    const currentItem = mixItems[mixIndex];
+    if(currentItem) currentItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if(mixtapeNextBtn){
+      mixtapeNextBtn.textContent = mixIndex === 0 ? '▶ Reproducir pista' : '⏭ Siguiente pista';
+    }
+  }
+
+  window.openMixtape = function(){
+    if(!mixtapeOverlay) return;
+    mixtapeOverlay.classList.add('show');
+    vinyl.classList.add('mixtape-spin', 'playing');
+    tonearm.classList.add('playing');
+    renderMixState();
+  };
+
+  function closeMixtape(){
+    if(mixtapeOverlay) mixtapeOverlay.classList.remove('show');
+    vinyl.classList.remove('mixtape-spin');
+    if(!isPlaying) vinyl.classList.remove('playing');
+  }
+
+  if(mixtapeCloseBtn) mixtapeCloseBtn.addEventListener('click', closeMixtape);
+
+  if(mixtapeNextBtn){
+    mixtapeNextBtn.addEventListener('click', () => {
+      if(mixIndex >= totalTracks) return;
+      const item = mixItems[mixIndex];
+      if(item) openInSpotify(item.dataset.trackId);
+      mixIndex++;
+      if(mixIndex >= totalTracks){
+        setText(mixtapeProgress, '🎉 Fin del mixtape — volvimos a empezar');
+        mixIndex = 0;
+      }
+      renderMixState();
+    });
+  }
+
+  if(mixtapeRestartBtn){
+    mixtapeRestartBtn.addEventListener('click', () => {
+      mixIndex = 0;
+      renderMixState();
+    });
+  }
+
+  mixItems.forEach((item, i) => {
+    item.addEventListener('click', () => {
+      mixIndex = i;
+      openInSpotify(item.dataset.trackId);
+      mixIndex = Math.min(i + 1, totalTracks - 1);
+      renderMixState();
+    });
+  });
 });
 
   /* ===== notas musicales flotando de fondo ===== */
