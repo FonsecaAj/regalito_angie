@@ -403,7 +403,7 @@
     }
 
     .card-portal.music-portal {
-      background: linear-gradient(135deg, #a15bf0 0%, #5233c4 55%, #5f2a77 100%);
+      background: linear-gradient(135deg, #0d1f18 0%, #123b2b 55%, #1a5c3e 100%);
       border: 1px solid #1e5c40;
     }
 
@@ -527,8 +527,102 @@
       .container { max-width: 460px; }
     }
 
+    /* ===== Move it, move it — micro-interacción de baile ===== */
+    .move-it-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd166, #d4a017);
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(212,160,23,0.4);
+      z-index: 40;
+      animation: moveItPulse 2.4s ease-in-out infinite;
+    }
+    .move-it-btn:active { transform: scale(0.92); }
+
+    @keyframes moveItPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .move-it-stage {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 10, 5, 0.72);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .move-it-stage.show { display: flex; }
+
+    .move-it-figure {
+      position: relative;
+      width: min(220px, 60vw);
+      aspect-ratio: 1/1;
+    }
+
+    .move-it-figure img,
+    .move-it-fallback {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: moveItDance 0.9s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .move-it-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+    }
+
+    @keyframes moveItDance {
+      0%   { transform: rotate(-8deg) translateY(0) scale(1); }
+      25%  { transform: rotate(6deg) translateY(-10px) scale(1.03); }
+      50%  { transform: rotate(-6deg) translateY(0) scale(1); }
+      75%  { transform: rotate(8deg) translateY(-10px) scale(1.03); }
+      100% { transform: rotate(-8deg) translateY(0) scale(1); }
+    }
+
+    .move-it-note {
+      position: absolute;
+      font-size: 1.2rem;
+      color: #ffd166;
+      opacity: 0;
+      animation: moveItNoteFloat 1.8s ease-in infinite;
+      pointer-events: none;
+    }
+
+    @keyframes moveItNoteFloat {
+      0%   { opacity: 0; transform: translateY(0) scale(0.8); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-60px) scale(1.1); }
+    }
+
+    .move-it-caption {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: #ffe9c9;
+    }
+
+    .move-it-hint {
+      font-size: 0.72rem;
+      color: #d9c7a8;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .envelope-hint, #canvas-hearts { animation: none !important; }
+      .move-it-btn, .move-it-figure img, .move-it-fallback, .move-it-note { animation: none !important; }
     }
   </style>
 </head>
@@ -612,7 +706,7 @@
           <div class="card-header"><span class="icon">🕷️</span><span style="flex:1">9/8/2026 🕷️🕸️</span><span class="plus">↗</span></div>
         </div>
         <div class="card card-portal music-portal" onclick="window.location.href='musica.html'">
-          <div class="card-header"><span class="icon">🎵</span><span style="flex:1">Nuestro tocadiscos virtual</span><span class="plus">↗</span></div>
+          <div class="card-header"><span class="icon">🎵</span><span style="flex:1">Nuestro tocadiscos</span><span class="plus">↗</span></div>
         </div>
       </div>
 
@@ -860,6 +954,63 @@
         bctx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
         burstRunning = false;
       }
+    }
+  </script>
+
+  <button class="move-it-btn" id="moveItBtn" aria-label="Move it, move it" onclick="toggleMoveIt()">🎉</button>
+
+  <div class="move-it-stage" id="moveItStage" onclick="toggleMoveIt()">
+    <div class="move-it-figure">
+      <img src="" alt="" id="moveItImg"
+          onerror="this.style.display='none'; document.getElementById('moveItFallback').style.display='flex';" />
+      <div class="move-it-fallback" id="moveItFallback" style="display:none;">🐾</div>
+      <span class="move-it-note" style="left:-10px; top:20%; animation-delay:0s;">♪</span>
+      <span class="move-it-note" style="right:-10px; top:10%; animation-delay:0.4s;">♫</span>
+      <span class="move-it-note" style="left:40%; top:-10px; animation-delay:0.8s;">♬</span>
+      <span class="move-it-note" style="right:10%; bottom:0%; animation-delay:1.2s;">♪</span>
+    </div>
+    <p class="move-it-caption" id="moveItCaption">Mirá amor, vos 🎶</p>
+  </div>
+
+  <script>
+
+    const moveItEntries = [
+      { img: 'movit.png', caption: 'Quiero mover el bote, quiero mover el bote 🎊' },
+      { img: 'movit2.png', caption: 'Pongan Safaera' },
+      { img: 'movit3.png', caption: 'Mirá amor, vos 🎀' },
+      { img: 'movit4.png', caption: 'Unos girasoles para mi sol 🌻 ' },
+      { img: 'movit5.png', caption: 'Uy! se activó la cámara frontal jaja' },
+    ];
+
+    let lastMoveItIndex = -1;
+
+    function pickRandomMoveIt() {
+      if (moveItEntries.length <= 1) return moveItEntries[0];
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * moveItEntries.length);
+      } while (idx === lastMoveItIndex && moveItEntries.length > 1);
+      lastMoveItIndex = idx;
+      return moveItEntries[idx];
+    }
+
+    function toggleMoveIt() {
+      const stage = document.getElementById('moveItStage');
+      const isOpening = !stage.classList.contains('show');
+
+      if (isOpening) {
+        const entry = pickRandomMoveIt();
+        const img = document.getElementById('moveItImg');
+        const fallback = document.getElementById('moveItFallback');
+        const caption = document.getElementById('moveItCaption');
+
+        fallback.style.display = 'none';
+        img.style.display = 'block';
+        img.src = entry.img;
+        caption.textContent = entry.caption;
+      }
+
+      stage.classList.toggle('show');
     }
   </script>
 </body>
