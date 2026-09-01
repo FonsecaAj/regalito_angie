@@ -714,6 +714,17 @@
     if(e.key === 'Enter') checkGate();
   });
 
+  document.getElementById('gate-input').addEventListener('input', (e) => {
+  let digits = e.target.value.replace(/\D/g, '').slice(0, 8); // solo números, máx 8
+  let formatted = digits;
+  if(digits.length > 4){
+    formatted = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+  } else if(digits.length > 2){
+    formatted = digits.slice(0,2) + '/' + digits.slice(2);
+  }
+  e.target.value = formatted;
+});
+
   function openGate(){
     const flash = document.getElementById('apparateFlash');
     flash.classList.add('go');
