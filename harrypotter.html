@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nuestro Hechizo de Magea — 30/8 🦉✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=IM+Fell+English+SC&family=EB+Garamond:ital,wght@0,400;0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#f3e3c3;
+    --parchment-dark:#e6d0a0;
+    --ink:#2b1a0f;
+    --gryff-red:#7a0c0c;
+    --gryff-gold:#d4af37;
+    --slyth-green:#0d5c3b;
+    --raven-blue:#1a2a5e;
+    --huff-yellow:#e0a52a;
+    --night:#0b0f24;
+    --night-2:#161b3d;
+    --candle:#ffd98a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'EB Garamond', serif;
+    background: radial-gradient(ellipse at 50% -10%, #22285a 0%, var(--night) 55%, #060812 100%);
+    color:var(--parchment);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  #stars-canvas, #spark-canvas{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  #spark-canvas{ z-index:55; }
+
+  /* ============ PORTAL DE ENTRADA ============ */
+  #gate{
+    position:fixed; inset:0; z-index:80;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background: radial-gradient(ellipse at 50% 30%, #1c2350 0%, #05060f 75%);
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #gate.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  .gate-card{
+    max-width:400px; width:100%;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+      var(--parchment);
+    color:var(--ink);
+    border-radius:10px;
+    padding:clamp(26px,6vw,38px) clamp(20px,5vw,30px);
+    text-align:center;
+    box-shadow: 0 0 0 2px var(--gryff-gold), 0 30px 70px rgba(0,0,0,0.6), inset 0 0 60px rgba(122,12,12,0.06);
+    position:relative;
+    border:1px solid #b8944a;
+  }
+  .gate-card::before{
+    content:'';
+    position:absolute; inset:8px;
+    border:1px dashed rgba(122,12,12,0.35);
+    border-radius:6px;
+    pointer-events:none;
+  }
+
+  .gate-crest{
+    font-size:2.4rem;
+    margin-bottom:6px;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.25));
+  }
+
+  .gate-eyebrow{
+    font-family:'IM Fell English SC', serif;
+    letter-spacing:2px;
+    font-size:0.78rem;
+    color:var(--gryff-red);
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+
+  .gate-title{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:clamp(1.4rem, 6vw, 1.9rem);
+    color:var(--ink);
+    line-height:1.25;
+    margin-bottom:10px;
+  }
+
+  .gate-text{
+    font-size:0.95rem;
+    line-height:1.6;
+    color:#4a3620;
+    margin-bottom:22px;
+    font-style:italic;
+  }
+
+  .gate-input-row{
+    display:flex; gap:8px; margin-bottom:6px;
+  }
+
+  #gate-input{
+    flex:1;
+    font-family:'IM Fell English SC', serif;
+    font-size:1.05rem;
+    letter-spacing:2px;
+    text-align:center;
+    padding:12px 8px;
+    border-radius:6px;
+    border:2px solid #b8944a;
+    background:#fffaf0;
+    color:var(--ink);
+    outline:none;
+  }
+  #gate-input:focus{ border-color:var(--gryff-red); }
+
+  .gate-submit{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:0.8rem;
+    background: linear-gradient(160deg, var(--gryff-gold), #a9791f);
+    color:#2b1a0f;
+    border:none;
+    padding:0 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .gate-submit:active{ transform:translateY(1px); }
+
+  .gate-hint{
+    font-size:0.72rem;
+    color:#8a6a3a;
+    margin-top:8px;
+  }
+
+  .gate-error{
+    font-size:0.78rem;
+    color:var(--gryff-red);
+    height:16px;
+    margin-top:8px;
+    font-style:italic;
+  }
+
+  @keyframes shake{
+    10%,90%{ transform:translateX(-1px); }
+    20%,80%{ transform:translateX(2px); }
+    30%,50%,70%{ transform:translateX(-4px); }
+    40%,60%{ transform:translateX(4px); }
+  }
+  .gate-card.shake{ animation: shake 0.5s ease; }
+
+  /* Portal apareciendo (apparition burst) al acertar */
+  .apparate-flash{
+    position:fixed; inset:0; z-index:90;
+    background:radial-gradient(circle, #fff 0%, var(--gryff-gold) 30%, transparent 70%);
+    opacity:0;
+    pointer-events:none;
+  }
+  .apparate-flash.go{
+    animation: flashOut 0.9s ease forwards;
+  }
+  @keyframes flashOut{
+    0%{ opacity:0; }
+    15%{ opacity:1; }
+    100%{ opacity:0; }
+  }
+
+  /* ============ CONTENIDO PRINCIPAL ============ */
+  #content{ display:none; }
+  #content.show{ display:block; animation: contentIn 0.9s ease; }
+  @keyframes contentIn{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .wrap{
+    position:relative; z-index:2;
+    max-width:960px; margin:0 auto;
+    padding:clamp(20px,6vw,40px) clamp(14px,4vw,20px) clamp(50px,10vw,90px);
+  }
+
+  .hero{ text-align:center; padding:clamp(16px,5vw,30px) 10px clamp(24px,6vw,36px); }
+
+  .hero-eyebrow{
+    font-family:'IM Fell English SC', serif;
+    color:var(--gryff-gold);
+    font-size:clamp(0.75rem,2.4vw,0.9rem);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+    opacity:0.9;
+  }
+
+  .hero-title{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:clamp(2rem, 10vw, 4.2rem);
+    line-height:1.05;
+    background: linear-gradient(180deg, #ffe9a8 0%, var(--gryff-gold) 45%, #8a6416 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter: drop-shadow(0 3px 10px rgba(212,175,55,0.35));
+    word-break:break-word;
+  }
+
+  .hero-sub{
+    font-family:'IM Fell English SC', serif;
+    font-size:clamp(0.9rem, 3vw, 1.15rem);
+    color:var(--parchment);
+    margin-top:12px;
+    opacity:0.85;
+  }
+
+  .hero-date{
+    display:inline-block; margin-top:22px;
+    padding:8px 20px;
+    border:2px dashed var(--gryff-gold);
+    border-radius:30px;
+    font-family:'Cinzel Decorative', cursive;
+    letter-spacing:2px;
+    font-size:clamp(0.85rem,3vw,1rem);
+    color:var(--gryff-gold);
+  }
+
+  .section-title{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:clamp(1.4rem, 5.5vw, 1.9rem);
+    color:var(--parchment);
+    text-align:center;
+    margin:clamp(40px,10vw,64px) 0 6px;
+    padding:0 8px;
+  }
+  .section-title span{ color:var(--gryff-gold); }
+  .section-subtitle{
+    text-align:center;
+    font-family:'IM Fell English SC', serif;
+    font-size:clamp(0.8rem,2.4vw,0.9rem);
+    color:#b9b3d6;
+    margin-bottom:30px;
+    padding:0 10px;
+  }
+
+  /* ===== GALERÍA ===== */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(min(210px,100%),1fr));
+    gap:clamp(12px,3vw,20px);
+  }
+
+  .panel{
+    position:relative;
+    border-radius:8px;
+    overflow:hidden;
+    aspect-ratio:3/4;
+    box-shadow:0 12px 26px rgba(0,0,0,0.45);
+    border:3px solid #6b4a1e;
+    transform:rotate(var(--rot,0deg));
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    cursor:pointer;
+    background:var(--parchment);
+  }
+  .panel:nth-child(2n){ --rot:1.3deg; }
+  .panel:nth-child(3n){ --rot:-1.5deg; }
+  .panel:nth-child(5n){ --rot:0.7deg; }
+  .panel:hover{
+    transform:rotate(0deg) translateY(-6px) scale(1.02);
+    box-shadow:0 18px 34px rgba(212,175,55,0.35);
+    z-index:2;
+  }
+
+  .panel.photo-slot{
+    background:linear-gradient(160deg, #1a2a5e, #0b0f24);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-slot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-slot .placeholder{ text-align:center; padding:14px; color:#cfd4f2; }
+  .photo-slot .placeholder .plus-icon{ font-size:2.3rem; color:var(--gryff-gold); display:block; margin-bottom:8px; }
+  .photo-slot .placeholder .label{ font-family:'IM Fell English SC', serif; font-size:0.85rem; }
+  .photo-slot .placeholder .hint{ font-size:0.64rem; margin-top:6px; opacity:0.7; line-height:1.4; }
+
+  .panel-tag{
+    position:absolute; top:8px; left:8px;
+    background:var(--gryff-red); color:#fff;
+    font-family:'Cinzel Decorative', cursive;
+    font-size:0.65rem; letter-spacing:1px;
+    padding:3px 9px; border-radius:3px; z-index:3;
+    box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  }
+  .panel-tag.tag-art{ background:var(--gryff-gold); color:var(--ink); }
+  .art-slot{ background:linear-gradient(160deg, #2a1130, #0b0f24); }
+  .art-slot .placeholder .plus-icon{ color:#8ecbff; }
+
+  /* Cromo de rana de chocolate (homenaje original) */
+  .panel.frog-card{
+    background: linear-gradient(165deg, #fff3d6 0%, #f0dca4 100%);
+    color:var(--ink);
+    padding:14px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .frog-masthead{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:clamp(0.85rem,3vw,1rem);
+    color:var(--gryff-red);
+    line-height:1.15;
+  }
+  .frog-issue{
+    align-self:flex-end;
+    background:var(--gryff-gold); color:var(--ink);
+    font-family:'IM Fell English SC', serif;
+    font-size:0.68rem; padding:3px 8px; border-radius:3px;
+    transform:rotate(-4deg); margin-top:4px;
+  }
+  .frog-caption{
+    font-family:'EB Garamond', serif; font-style:italic;
+    font-size:clamp(0.78rem,2.6vw,0.9rem); line-height:1.4;
+    color:#3a2a12;
+    background:rgba(255,255,255,0.5);
+    border:1px solid #b8944a; border-radius:10px;
+    padding:8px 10px;
+  }
+
+  /* Burbuja / pergamino de mensaje */
+  .panel.bubble{
+    background:#fdf6e3; color:var(--ink);
+    padding:20px 16px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    border-color:#8a6a3a;
+  }
+  .bubble-inner{
+    font-family:'IM Fell English SC', serif;
+    font-size:clamp(0.82rem,3vw,0.98rem);
+    line-height:1.55; color:#3a2a12;
+  }
+
+  /* ===== RAZONES ===== */
+  .reasons{ display:flex; flex-direction:column; gap:12px; max-width:640px; margin:0 auto; }
+  .reason{
+    background:linear-gradient(135deg, rgba(26,42,94,0.5), rgba(11,15,36,0.75));
+    border:1px solid rgba(212,175,55,0.25);
+    border-left:4px solid var(--gryff-red);
+    border-radius:10px; padding:16px 18px; text-align:left;
+    backdrop-filter:blur(2px);
+  }
+  .reason .r-icon{ font-size:1.15rem; margin-right:8px; }
+  .reason .r-title{
+    font-family:'Cinzel Decorative', cursive;
+    letter-spacing:0.5px; font-size:1rem; color:var(--gryff-gold);
+  }
+  .reason p{ margin-top:6px; font-size:0.9rem; line-height:1.6; color:#dcd8f2; }
+
+  /* ===== FOOTER ===== */
+  .footer{ text-align:center; margin-top:64px; }
+  .back-link{
+    display:inline-block;
+    font-family:'Cinzel Decorative', cursive;
+    letter-spacing:1px; font-size:0.95rem;
+    color:var(--ink); background:var(--gryff-gold);
+    padding:12px 26px; border-radius:30px; text-decoration:none;
+    box-shadow:0 8px 20px rgba(212,175,55,0.25);
+    transition:transform 0.2s ease;
+  }
+  .back-link:hover{ transform:translateY(-3px); }
+  .footer-note{ margin-top:14px; font-size:0.72rem; color:#8b86ad; }
+
+  @media (max-width:900px){
+    .gallery{ grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); }
+  }
+  @media (max-width:600px){
+    .gallery{ grid-template-columns:repeat(2,1fr); gap:12px; }
+  }
+  @media (max-width:420px){
+    .gallery{ grid-template-columns:1fr; }
+    .panel{ aspect-ratio:4/3; }
+    .back-link{ font-size:0.88rem; padding:11px 20px; }
+  }
+  @media (min-width:1400px){ .wrap{ max-width:1120px; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; scroll-behavior:auto !important; } }
+
+  /* ============ LA SNITCH DORADA (detalle sorpresa) ============ */
+  .snitch{
+    position:fixed;
+    top:0; left:0;
+    width:38px; height:38px;
+    z-index:60;
+    display:none;
+    cursor:pointer;
+    filter: drop-shadow(0 4px 12px rgba(212,175,55,0.65));
+    transition: filter 0.2s ease;
+  }
+  .snitch.show{ display:block; }
+  .snitch:hover{ filter: drop-shadow(0 4px 18px rgba(255,233,168,0.9)); }
+  .snitch svg{ width:100%; height:100%; overflow:visible; }
+  .snitch .wing{
+    transform-origin:50% 50%;
+    animation: flap 0.18s ease-in-out infinite alternate;
+  }
+  .snitch .wing.left{ animation-delay:0s; }
+  .snitch .wing.right{ animation-delay:0.05s; }
+  @keyframes flap{
+    from{ transform:scaleX(1) rotate(0deg); }
+    to{ transform:scaleX(0.55) rotate(6deg); }
+  }
+  .snitch-hint{
+    position:fixed;
+    z-index:60;
+    font-family:'IM Fell English SC', serif;
+    font-size:0.7rem;
+    color:var(--gryff-gold);
+    background:rgba(11,15,36,0.75);
+    border:1px solid rgba(212,175,55,0.4);
+    padding:4px 10px;
+    border-radius:20px;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.6s ease;
+    white-space:nowrap;
+  }
+  .snitch-hint.show{ opacity:0.9; }
+
+  .snitch-modal{
+    position:fixed; inset:0; z-index:95;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(5,6,15,0.82);
+    backdrop-filter:blur(2px);
+    opacity:0; visibility:hidden;
+    transition:opacity 0.5s ease, visibility 0.5s ease;
+  }
+  .snitch-modal.show{ opacity:1; visibility:visible; }
+
+  .snitch-card{
+    max-width:420px; width:100%;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(212,175,55,0.15), transparent 60%),
+      var(--parchment);
+    color:var(--ink);
+    border-radius:12px;
+    padding:clamp(28px,6vw,40px) clamp(22px,5vw,32px);
+    text-align:center;
+    border:1px solid #b8944a;
+    box-shadow: 0 0 0 2px var(--gryff-gold), 0 30px 80px rgba(0,0,0,0.65);
+    position:relative;
+    transform:scale(0.85);
+    transition:transform 0.5s cubic-bezier(.2,1.4,.4,1);
+  }
+  .snitch-modal.show .snitch-card{ transform:scale(1); }
+
+  .snitch-card .sc-icon{ font-size:2.1rem; margin-bottom:6px; }
+  .snitch-card .sc-eyebrow{
+    font-family:'IM Fell English SC', serif;
+    letter-spacing:2px; font-size:0.72rem;
+    color:var(--gryff-red); text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .snitch-card .sc-title{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:clamp(1.2rem,5vw,1.55rem);
+    line-height:1.3; margin-bottom:14px; color:var(--ink);
+  }
+  .snitch-card .sc-text{
+    font-family:'EB Garamond', serif;
+    font-style:italic; font-size:0.95rem; line-height:1.65;
+    color:#4a3620; margin-bottom:20px;
+  }
+  .snitch-card .sc-close{
+    font-family:'Cinzel Decorative', cursive;
+    font-size:0.78rem;
+    background: linear-gradient(160deg, var(--gryff-gold), #a9791f);
+    color:#2b1a0f; border:none; padding:10px 22px;
+    border-radius:20px; cursor:pointer; font-weight:700;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+<canvas id="spark-canvas"></canvas>
+<div class="apparate-flash" id="apparateFlash"></div>
+
+<!-- ============ LA SNITCH DORADA — sorpresa escondida ============ -->
+<div class="snitch" id="snitch" onclick="catchSnitch()">
+  <svg viewBox="0 0 60 60">
+    <ellipse class="wing left" cx="14" cy="20" rx="15" ry="8" fill="#f4f1e6" opacity="0.92" transform="rotate(-18 14 20)"/>
+    <ellipse class="wing right" cx="46" cy="20" rx="15" ry="8" fill="#f4f1e6" opacity="0.92" transform="rotate(18 46 20)"/>
+    <circle cx="30" cy="34" r="13" fill="url(#snitchGold)"/>
+    <circle cx="30" cy="34" r="13" fill="none" stroke="#8a6416" stroke-width="1"/>
+    <defs>
+      <radialGradient id="snitchGold" cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#fff6d8"/>
+        <stop offset="55%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#a9791f"/>
+      </radialGradient>
+    </defs>
+  </svg>
+</div>
+<div class="snitch-hint" id="snitchHint">✨ atrápame…</div>
+
+<div class="snitch-modal" id="snitchModal">
+  <div class="snitch-card">
+    <div class="sc-icon">🔮</div>
+    <div class="sc-eyebrow">Gryffindor ganaa!!</div>
+    <h3 class="sc-title">Atrapaste la Snitch<br>y esto es lo que guardaba</h3>
+    <p class="sc-text">De todo lo que un mago puede perseguir toda su vida, yo ya encontré lo mío: no un trofeo, ni un torneo, sino esta certeza tranquila de que quiero seguir eligiéndote a ti, todos los días. Gracias por compartir conmigo lo que te hace feliz, mi persona favorita en cualquier mundo, mágico o no.</p>
+    <button class="sc-close" onclick="closeSnitch()">Guardar en el corazón 💛</button>
+  </div>
+</div>
+
+<!-- ============ PORTAL / ENTRADA CON FECHA ============ -->
+<div id="gate">
+  <div class="gate-card" id="gateCard">
+    <div class="gate-crest">🦉🕯️</div>
+    <div class="gate-eyebrow">Correo lechuza — entrega urgente</div>
+    <h1 class="gate-title">Para abrir este pergamino,<br>pronuncia la fecha correcta</h1>
+    <p class="gate-text">"Solo un hechizo se abre con la fecha exacta de nuestra propia historia. Escríbela para entrar."</p>
+    <div class="gate-input-row">
+      <input type="text" id="gate-input" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" />
+      <button class="gate-submit" onclick="checkGate()">Abrir ✨</button>
+    </div>
+    <div class="gate-error" id="gateError"></div>
+    <div class="gate-hint">Pista: es una fecha muuy mágica, formato día/mes/año</div>
+  </div>
+</div>
+
+<!-- ============ CONTENIDO ============ -->
+<div id="content">
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Con motivo de</div>
+      <h1 class="hero-title">Harry Potter<br>y la piedra filosofal</h1>
+      <p class="hero-sub">— la magea que empezó contigo 💗 —</p>
+      <div class="hero-date">30 · 08 · 2026 🦉✨</div>
+    </div>
+
+    <div class="gallery" id="gallery">
+
+      <div class="panel photo-slot">
+        <span class="panel-tag">FOTO 1</span>
+        <img src="HPfoto1.jpg" alt="Foto 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Foto 1</div>
+          <div class="hint">Guarda tu imagen como<br><b>foto1.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel frog-card">
+        <div class="frog-masthead">MAGOS<br>CÉLEBRES</div>
+        <div class="frog-issue">Colección especial</div>
+        <p class="frog-caption">"De todos los hechizos que aprendí en Hogwarts, ninguno funcionó tan bien como amarte a ti."</p>
+      </div>
+
+      <div class="panel photo-slot art-slot">
+        <span class="panel-tag tag-art">ARTE 1</span>
+        <img src="HParte1.jpg" alt="Arte 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Arte 1</div>
+          <div class="hint">Guarda tu imagen como<br><b>arte1.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel bubble">
+        <div class="bubble-inner">"Si el Mapa del Merodeador pudiera rastrear corazones, el mío siempre marcaría un punto: el tuyo."</div>
+      </div>
+
+      <div class="panel frog-card">
+        <div class="frog-masthead">EL PROFETA<br>MÁGICO</div>
+        <div class="frog-issue">Ed. de hoy</div>
+        <p class="frog-caption">Titular: "Joven mago prefiere una tarde en Las Tres Escobas contigo, a cualquier torneo de los tres magos."</p>
+      </div>
+
+      <div class="panel photo-slot art-slot">
+        <span class="panel-tag tag-art">ARTE 2</span>
+        <img src="HParte2.jpg" alt="Arte 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Arte 2</div>
+          <div class="hint">Guarda tu imagen como<br><b>arte2.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel photo-slot">
+        <span class="panel-tag">FOTO 2</span>
+        <img src="HPfoto2.jpg" alt="Foto 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Foto 2</div>
+          <div class="hint">Guarda tu imagen como<br><b>foto2.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel bubble">
+        <div class="bubble-inner">"No hace falta una gota de Felix Felicis cuando encontrarte a ti ya fue la mejor suerte de mi vida."</div>
+      </div>
+
+      <div class="panel frog-card">
+        <div class="frog-masthead">EL SOMBRERO<br>SELECCIONADOR</div>
+        <div class="frog-issue">Veredicto final</div>
+        <p class="frog-caption">"Valentía de Gryffindor, lealtad de Hufflepuff, astucia de Slytherin y el ingenio de Ravenclaw: todo eso vi en ti antes de que dijeras una palabra."</p>
+      </div>
+
+      <div class="panel photo-slot art-slot">
+        <span class="panel-tag tag-art">ARTE 3</span>
+        <img src="HParte3.jpg" alt="Arte 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Arte 3</div>
+          <div class="hint">Guarda tu imagen como<br><b>arte3.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel photo-slot">
+        <span class="panel-tag">FOTO 3</span>
+        <img src="HPfoto3.jpg" alt="Foto 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Foto 3</div>
+          <div class="hint">Guarda tu imagen como<br><b>foto3.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+      <div class="panel bubble">
+        <div class="bubble-inner">"Expecto Patronum: el recuerdo más feliz que tengo para conjurarlo siempre eres tú."</div>
+      </div>
+
+      <div class="panel photo-slot art-slot">
+        <span class="panel-tag tag-art">ARTE 4</span>
+        <img src="HParte4.jpg" alt="Arte 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus-icon">+</span>
+          <div class="label">Arte 4</div>
+          <div class="hint">Guarda tu imagen como<br><b>arte4.jpg</b> junto a este archivo</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h2 class="section-title">Por qué eres mi <span>hechizo favorito</span></h2>
+    <p class="section-subtitle">Razones tejidas con magea, una a una</p>
+
+    <div class="reasons">
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">🕯️</span>Mi Sala de los Menesteres</span>
+        <p>No importa qué tan raro sea el día, contigo siempre encuentro exactamente lo que necesito: paz, risas y un lugar donde quedarme.</p>
+      </div>
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">🌿</span>Herbología de corazón</span>
+        <p>La forma en la que cuidas lo que quieres, con paciencia y cariño constante, me enseña todos los días lo que es amar bien.</p>
+      </div>
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">⚡</span>Mi hechizo protector</span>
+        <p>Tienes un poder que ningún encantamiento podría igualar: el de hacer que todo se sienta más ligero con solo estar cerca.</p>
+      </div>
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">🦉</span>Correo que siempre llega</span>
+        <p>No hace falta una lechuza para saber que pienso en ti; pero si existiera, llegaría todos los días con el mismo mensaje: te amo.</p>
+      </div>
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">🍫</span>Dulce como una rana de chocolate</span>
+        <p>Eres esa sorpresa buena que uno no espera y termina siendo lo mejor del día, una y otra vez.</p>
+      </div>
+      <div class="reason">
+        <span class="r-title"><span class="r-icon">✨</span>30 de agosto</span>
+        <p>Esa fecha se quedó marcada como el día en que empezó nuestra propia historia mágica, la que sigo queriendo escribir contigo.</p>
+      </div>
+    </div>
+
+    <div class="footer">
+        <a class="back-link" href="index.html">← Volver a nuestra carta</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ===== Portal: verificación de fecha ===== */
+  const TARGET_DAY = 30, TARGET_MONTH = 8, TARGET_YEAR = 2026;
+
+  function parseDateInput(raw){
+    const cleaned = raw.trim().replace(/[.\-\s]/g, '/');
+    const parts = cleaned.split('/').filter(Boolean);
+    if(parts.length < 2) return null;
+    let [d, m, y] = parts.map(p => parseInt(p, 10));
+    if(!y) y = TARGET_YEAR;
+    if(isNaN(d) || isNaN(m)) return null;
+    return { d, m, y };
+  }
+
+  function checkGate(){
+    const input = document.getElementById('gate-input');
+    const parsed = parseDateInput(input.value);
+    const errorEl = document.getElementById('gateError');
+    const card = document.getElementById('gateCard');
+
+    const correct = parsed && parsed.d === TARGET_DAY && parsed.m === TARGET_MONTH &&
+      (parsed.y === TARGET_YEAR || isNaN(parsed.y));
+
+    if(correct){
+      errorEl.textContent = '';
+      openGate();
+    } else {
+      errorEl.textContent = 'Esa fecha no abre el pergamino… inténtalo de nuevo.';
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+    }
+  }
+
+  document.getElementById('gate-input').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') checkGate();
+  });
+
+  function openGate(){
+    const flash = document.getElementById('apparateFlash');
+    flash.classList.add('go');
+    launchSparkBurst();
+
+    setTimeout(() => {
+      document.getElementById('gate').classList.add('hide');
+      document.getElementById('content').classList.add('show');
+    }, 420);
+  }
+
+  /* ===== Fondo: estrellas + velas flotantes ===== */
+  const starsCanvas = document.getElementById('stars-canvas');
+  const sctx = starsCanvas.getContext('2d');
+  let stars = [], candles = [];
+
+  function resizeStars(){
+    starsCanvas.width = window.innerWidth;
+    starsCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeStars);
+  resizeStars();
+
+  class Star{
+    constructor(){ this.reset(); }
+    reset(){
+      this.x = Math.random() * starsCanvas.width;
+      this.y = Math.random() * starsCanvas.height;
+      this.size = Math.random() * 1.6 + 0.4;
+      this.baseAlpha = Math.random() * 0.5 + 0.2;
+      this.twinklePhase = Math.random() * Math.PI * 2;
+      this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+    }
+    update(){ this.twinklePhase += this.twinkleSpeed; }
+    draw(){
+      const a = this.baseAlpha + Math.sin(this.twinklePhase) * 0.25;
+      sctx.save();
+      sctx.globalAlpha = Math.max(a, 0);
+      sctx.fillStyle = '#fff8e0';
+      sctx.beginPath();
+      sctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      sctx.fill();
+      sctx.restore();
+    }
+  }
+
+  class Candle{
+    constructor(){ this.reset(true); }
+    reset(initial){
+      this.x = Math.random() * starsCanvas.width;
+      this.y = initial ? Math.random() * starsCanvas.height : starsCanvas.height + 30;
+      this.size = Math.random() * 3 + 2;
+      this.speedY = Math.random() * 0.35 + 0.12;
+      this.sway = Math.random() * Math.PI * 2;
+      this.swaySpeed = Math.random() * 0.015 + 0.008;
+      this.opacity = Math.random() * 0.5 + 0.35;
+    }
+    update(){
+      this.sway += this.swaySpeed;
+      this.y -= this.speedY;
+      this.x += Math.sin(this.sway) * 0.4;
+      if(this.y < -20) this.reset(false);
+    }
+    draw(){
+      sctx.save();
+      sctx.globalAlpha = this.opacity;
+      const grad = sctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+      grad.addColorStop(0, '#ffe9a8');
+      grad.addColorStop(1, 'rgba(255,217,138,0)');
+      sctx.fillStyle = grad;
+      sctx.beginPath();
+      sctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+      sctx.fill();
+      sctx.fillStyle = '#fff4d0';
+      sctx.beginPath();
+      sctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+      sctx.fill();
+      sctx.restore();
+    }
+  }
+
+  for(let i = 0; i < 90; i++) stars.push(new Star());
+  for(let i = 0; i < 18; i++) candles.push(new Candle());
+
+  function animateStars(){
+    sctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+    stars.forEach(s => { s.update(); s.draw(); });
+    candles.forEach(c => { c.update(); c.draw(); });
+    requestAnimationFrame(animateStars);
+  }
+  animateStars();
+
+  /* ===== Chispas de varita (click / apparate burst) ===== */
+  const sparkCanvas = document.getElementById('spark-canvas');
+  const pctx = sparkCanvas.getContext('2d');
+  function resizeSpark(){
+    sparkCanvas.width = window.innerWidth;
+    sparkCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeSpark);
+  resizeSpark();
+
+  const sparkColors = ['#d4af37', '#ffe9a8', '#7a0c0c', '#f4d06f'];
+  let sparks = [];
+  let sparkRunning = false;
+
+  class Spark{
+    constructor(cx, cy){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 7 + 3;
+      this.x = cx; this.y = cy;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.size = Math.random() * 3 + 1.5;
+      this.color = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+      this.life = 1;
+      this.decay = Math.random() * 0.02 + 0.012;
+    }
+    update(){
+      this.vy += 0.05;
+      this.vx *= 0.97; this.vy *= 0.97;
+      this.x += this.vx; this.y += this.vy;
+      this.life -= this.decay;
+    }
+    draw(){
+      if(this.life <= 0) return;
+      pctx.save();
+      pctx.globalAlpha = Math.max(this.life, 0);
+      pctx.fillStyle = this.color;
+      pctx.beginPath();
+      pctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      pctx.fill();
+      pctx.restore();
+    }
+  }
+
+  function launchSparkBurst(){
+    const cx = sparkCanvas.width / 2, cy = sparkCanvas.height / 2;
+    for(let i = 0; i < 90; i++) sparks.push(new Spark(cx, cy));
+    if(!sparkRunning){ sparkRunning = true; runSparkLoop(); }
+  }
+
+  function runSparkLoop(){
+    pctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+    sparks.forEach(s => { s.update(); s.draw(); });
+    sparks = sparks.filter(s => s.life > 0);
+    if(sparks.length > 0){
+      requestAnimationFrame(runSparkLoop);
+    } else {
+      pctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+      sparkRunning = false;
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if(!document.getElementById('content').classList.contains('show')) return;
+    for(let i = 0; i < 4; i++) sparks.push(new Spark(e.clientX, e.clientY));
+    if(!sparkRunning){ sparkRunning = true; runSparkLoop(); }
+  });
+
+  /* ===== La Snitch dorada: vuela sola, se puede atrapar ===== */
+  const snitchEl = document.getElementById('snitch');
+  const snitchHint = document.getElementById('snitchHint');
+  let snitchPos = { x: 0, y: 0 };
+  let snitchTarget = { x: 0, y: 0 };
+  let snitchCaught = false;
+  let snitchFlying = false;
+
+  function randomSnitchTarget(){
+    const margin = 60;
+    return {
+      x: margin + Math.random() * (window.innerWidth - margin * 2),
+      y: margin + Math.random() * (window.innerHeight - margin * 2)
+    };
+  }
+
+  function startSnitch(){
+    snitchPos = randomSnitchTarget();
+    snitchTarget = randomSnitchTarget();
+    snitchEl.classList.add('show');
+    snitchFlying = true;
+    scheduleNewTarget();
+    flySnitch();
+
+    // Muestra la pista una sola vez, después de un ratito
+    setTimeout(() => {
+      if(!snitchCaught) snitchHint.classList.add('show');
+    }, 3500);
+  }
+
+  function scheduleNewTarget(){
+    if(snitchCaught) return;
+    snitchTarget = randomSnitchTarget();
+    setTimeout(scheduleNewTarget, 1800 + Math.random() * 1600);
+  }
+
+  function flySnitch(){
+    if(snitchCaught) return;
+
+    snitchPos.x += (snitchTarget.x - snitchPos.x) * 0.045;
+    snitchPos.y += (snitchTarget.y - snitchPos.y) * 0.045;
+
+    // pequeño temblor tipo vuelo errático
+    const jitterX = Math.sin(Date.now() / 130) * 4;
+    const jitterY = Math.cos(Date.now() / 170) * 4;
+
+    snitchEl.style.transform = `translate(${snitchPos.x + jitterX}px, ${snitchPos.y + jitterY}px)`;
+    snitchHint.style.transform = `translate(${snitchPos.x + 44}px, ${snitchPos.y + 8}px)`;
+
+    requestAnimationFrame(flySnitch);
+  }
+
+  function catchSnitch(){
+    if(snitchCaught) return;
+    snitchCaught = true;
+    snitchHint.classList.remove('show');
+    snitchEl.classList.remove('show');
+
+    // ráfaga de chispas justo donde estaba
+    const rect = snitchEl.getBoundingClientRect();
+    for(let i = 0; i < 60; i++) sparks.push(new Spark(rect.left + rect.width / 2, rect.top + rect.height / 2));
+    if(!sparkRunning){ sparkRunning = true; runSparkLoop(); }
+
+    setTimeout(() => {
+      document.getElementById('snitchModal').classList.add('show');
+    }, 250);
+  }
+
+  function closeSnitch(){
+    document.getElementById('snitchModal').classList.remove('show');
+  }
+
+  // La snitch aparece unos segundos después de entrar al hechizo
+  const originalOpenGate = openGate;
+  openGate = function(){
+    originalOpenGate();
+    setTimeout(startSnitch, 2200);
+  };
+</script>
+</body>
+</html>

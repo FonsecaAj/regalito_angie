@@ -407,6 +407,17 @@
       border: 1px solid #1e5c40;
     }
 
+    .card-portal.harry-portal {
+      background: repeating-linear-gradient(
+        135deg,
+        #740001,
+        #740001 25px,
+        #eeba30 25px,
+        #eeba30 50px
+      );
+      border: 1px solid #1e5c40;
+    }
+
     .card-portal.music-portal:hover {
       border-color: #ffd166;
       box-shadow: 0 8px 20px rgba(29,185,84,0.3);
@@ -702,12 +713,16 @@
           <div class="card-header"><span class="icon">💌</span><span style="flex:1">Una promesa</span><span class="plus">+</span></div>
           <div class="card-body">Prometo estar ahí para ti, apoyarte en tus metas, celebrar tus logros y seguir acumulando momentos juntos, uno a la vez.</div>
         </div>
-        <div class="card card-portal" onclick="window.location.href='spiderman.html'">
-          <div class="card-header"><span class="icon">🕷️</span><span style="flex:1">9/8/2026 🕷️🕸️</span><span class="plus">↗</span></div>
-        </div>
         <div class="card card-portal music-portal" onclick="window.location.href='musica.html'">
           <div class="card-header"><span class="icon">🎵</span><span style="flex:1">Nuestro tocadiscos</span><span class="plus">↗</span></div>
         </div>
+        <div class="card card-portal" onclick="window.location.href='spiderman.html'">
+          <div class="card-header"><span class="icon">🕷️</span><span style="flex:1">9/8/2026 🕷️🕸️</span><span class="plus">↗</span></div>
+        </div>
+        <div class="card card-portal harry-portal" onclick="window.location.href='harrypotter.html'">
+          <div class="card-header"><span class="icon">🦉</span><span style="flex:1">Oh estas haciendo magea, continúa ✨</span><span class="plus">↗</span></div>
+        </div>
+
       </div>
 
       <button class="btn-final" onclick="sendLove()">¿Te gustó el detallito mi niña? 💖</button>
