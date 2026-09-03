@@ -342,7 +342,7 @@
     position:absolute;
     bottom:16%;
     left:50%;
-    width:78px; height:78px;
+    width:100px; height:72px;
     transform:translateX(-50%);
     cursor:pointer;
     z-index:2;
@@ -360,12 +360,12 @@
     50%{ transform:translateY(-3px) rotate(-1deg); }
   }
   .pet-creature .pet-tail{
-    animation: tailWag 0.7s ease-in-out infinite;
-    transform-origin:85% 60%;
+    animation: tailWag 0.8s ease-in-out infinite;
+    transform-origin:100% 58%;
   }
   @keyframes tailWag{
     0%,100%{ transform:rotate(0deg); }
-    50%{ transform:rotate(18deg); }
+    50%{ transform:rotate(10deg); }
   }
   .pet-creature.happy .pet-bob{ animation: petJump 0.5s ease-in-out 3; }
   @keyframes petJump{
@@ -506,9 +506,28 @@
     display:flex; align-items:center; justify-content:center;
   }
   .polaroid-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .polaroid-photo .placeholder{ text-align:center; padding:10px; color:#7a9a7f; }
-  .polaroid-photo .placeholder .plus{ font-size:2rem; display:block; margin-bottom:4px; color:#4a7a55; }
-  .polaroid-photo .placeholder .hint{ font-size:0.62rem; line-height:1.4; }
+  .polaroid-photo .placeholder{
+    text-align:center; padding:16px 10px;
+    color:#5a8a5e;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    height:100%;
+  }
+  .polaroid-photo .placeholder .plus{
+    font-size:2.2rem; display:block; margin-bottom:6px;
+    color:#4a7a55;
+    width:48px; height:48px;
+    border-radius:50%;
+    background:rgba(74,122,85,0.08);
+    border:2px dashed rgba(74,122,85,0.25);
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
+  .polaroid-photo .placeholder .hint{
+    font-size:0.68rem; line-height:1.45;
+    color:#6a9a6e;
+    font-style:italic;
+  }
 
   .polaroid-caption{
     font-family:'Caveat', cursive;
@@ -675,6 +694,177 @@
     100%{ opacity:0; transform:translateY(-70px) scale(1.2); }
   }
 
+  /* ============ SOLCITO ============ */
+  .sun-btn{
+    position:fixed;
+    top:16px; right:18px;
+    width:50px; height:50px;
+    background:none; border:none; cursor:pointer;
+    z-index:10;
+    filter:drop-shadow(0 2px 8px rgba(255,180,40,0.35));
+    transition:transform 0.3s ease, filter 0.3s ease;
+    opacity:0; pointer-events:none;
+  }
+  .sun-btn.show{ opacity:1; pointer-events:auto; }
+  .sun-btn:hover{
+    transform:scale(1.12) rotate(15deg);
+    filter:drop-shadow(0 4px 14px rgba(255,180,40,0.55));
+  }
+  .sun-btn svg{ width:100%; height:100%; }
+  .sun-btn .sun-rays{
+    animation: sunSpin 20s linear infinite;
+    transform-origin:50% 50%;
+  }
+  @keyframes sunSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+
+  /* Modal sol */
+  .sun-img-overlay{
+    position:fixed; inset:0; z-index:85;
+    background:rgba(40,30,10,0.5);
+    backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .sun-img-overlay.show{ display:flex; animation: contentIn 0.4s ease; }
+
+  .sun-img-card{
+    position:relative;
+    max-width:380px; width:100%;
+    background:linear-gradient(180deg, #fffdf0, #fff8e0);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(180,120,20,0.3), 0 0 0 1px rgba(212,168,0,0.15);
+    animation: treeCardPop 0.45s cubic-bezier(.2,1.4,.4,1);
+  }
+  .sun-img-frame{
+    width:100%;
+    aspect-ratio:1/1;
+    background:linear-gradient(160deg, #fff8e0, #ffe9a8);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .sun-img-frame img{
+    width:100%; height:100%;
+    object-fit:contain;
+    display:block;
+    padding:14px;
+  }
+  .sun-img-sheen{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.45) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(255,200,60,0.15) 0%, transparent 40%);
+    pointer-events:none;
+  }
+  .sun-img-body{
+    padding:20px 22px 18px;
+    text-align:center;
+  }
+  .sun-img-eyebrow{
+    font-size:0.62rem; letter-spacing:2.5px;
+    text-transform:uppercase; color:#b8942a;
+    font-weight:600; margin-bottom:5px;
+  }
+  .sun-img-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.4rem,5vw,1.8rem);
+    color:#8a6a14; line-height:1.15; margin-bottom:6px;
+  }
+  .sun-img-text{
+    font-family:'Playfair Display', serif;
+    font-style:italic; font-size:0.88rem;
+    line-height:1.6; color:#6a5a3a;
+    margin-bottom:16px;
+  }
+  .sun-img-btn{
+    display:inline-block;
+    font-family:'Caveat', cursive; font-weight:700;
+    font-size:1rem;
+    background:linear-gradient(135deg, #ffce3d, #d4a017);
+    color:#4a3208; border:none;
+    padding:10px 24px; border-radius:24px;
+    cursor:pointer;
+    box-shadow:0 6px 14px rgba(212,160,23,0.3);
+    transition:transform 0.2s ease;
+  }
+  .sun-img-btn:hover{ transform:translateY(-2px); }
+
+  /* ============ MODAL TULIPÁN ============ */
+  .tulip-img-overlay{
+    position:fixed; inset:0; z-index:85;
+    background:rgba(60,20,40,0.5);
+    backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .tulip-img-overlay.show{ display:flex; animation: contentIn 0.4s ease; }
+
+  .tulip-img-card{
+    position:relative;
+    max-width:380px; width:100%;
+    background:linear-gradient(180deg, #fff5f8, #ffe8ef);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(180,60,90,0.3), 0 0 0 1px rgba(200,80,110,0.15);
+    animation: treeCardPop 0.45s cubic-bezier(.2,1.4,.4,1);
+  }
+  .tulip-img-frame{
+    width:100%;
+    aspect-ratio:4/3;
+    background:linear-gradient(160deg, #fff0f3, #ffd6e0);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .tulip-img-frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .tulip-img-sheen{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.5) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(255,120,160,0.12) 0%, transparent 40%);
+    pointer-events:none;
+  }
+  .tulip-img-body{
+    padding:20px 22px 18px;
+    text-align:center;
+  }
+  .tulip-img-eyebrow{
+    font-size:0.62rem; letter-spacing:2.5px;
+    text-transform:uppercase; color:#c94a71;
+    font-weight:600; margin-bottom:5px;
+  }
+  .tulip-img-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.4rem,5vw,1.8rem);
+    color:#a83a5a; line-height:1.15; margin-bottom:6px;
+  }
+  .tulip-img-text{
+    font-family:'Playfair Display', serif;
+    font-style:italic; font-size:0.88rem;
+    line-height:1.6; color:#6a4a50;
+    margin-bottom:16px;
+  }
+  .tulip-img-btn{
+    display:inline-block;
+    font-family:'Caveat', cursive; font-weight:700;
+    font-size:1rem;
+    background:linear-gradient(135deg, #ff7aa2, #c94a71);
+    color:#fff; border:none;
+    padding:10px 24px; border-radius:24px;
+    cursor:pointer;
+    box-shadow:0 6px 14px rgba(200,74,113,0.3);
+    transition:transform 0.2s ease;
+  }
+  .tulip-img-btn:hover{ transform:translateY(-2px); }
+
   /* ============ MODAL DE MENSAJE ============ */
   .msg-overlay{
     position:fixed; inset:0; z-index:80;
@@ -723,6 +913,61 @@
 <body>
 
 <canvas id="petals-canvas"></canvas>
+
+<!-- ============ SOLCITO ============ -->
+<button class="sun-btn" id="sunBtn" onclick="openSunImage()" aria-label="Sol">
+  <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+    <g class="sun-rays">
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(30 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(60 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(90 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(120 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(150 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(180 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(210 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(240 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(270 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(300 30 30)"/>
+      <line x1="30" y1="4" x2="30" y2="11" stroke="#ffce3d" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(330 30 30)"/>
+    </g>
+    <circle cx="30" cy="30" r="14" fill="#ffce3d"/>
+    <circle cx="30" cy="30" r="11" fill="#ffd966"/>
+    <circle cx="26" cy="26" r="4" fill="#ffe599" opacity="0.6"/>
+  </svg>
+</button>
+
+<!-- Modal del sol -->
+<div class="sun-img-overlay" id="sunImgOverlay" onclick="closeSunImage(event)">
+  <div class="sun-img-card" onclick="event.stopPropagation()">
+    <div class="sun-img-frame">
+      <img src="jardin/sol.png" alt="Nuestro sol" onerror="this.style.display='none';" />
+      <div class="sun-img-sheen"></div>
+    </div>
+    <div class="sun-img-body">
+      <div class="sun-img-eyebrow">Nuestro sol especial</div>
+      <h3 class="sun-img-title">Tú eres mi sol ☀️</h3>
+      <p class="sun-img-text">Así como el sol ilumina cada rincón del jardín, tú iluminas cada día de mi vida. Gracias por brillar siempre por mí.</p>
+      <button class="sun-img-btn" onclick="closeSunImage()">Cerrar con cariño 🌻</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL TULIPÁN ============ -->
+<div class="tulip-img-overlay" id="tulipImgOverlay" onclick="closeTulipImage(event)">
+  <div class="tulip-img-card" onclick="event.stopPropagation()">
+    <div class="tulip-img-frame">
+      <img src="jardin/diosa.jpeg" alt="Diosa" onerror="this.style.display='none';" />
+      <div class="tulip-img-sheen"></div>
+    </div>
+    <div class="tulip-img-body">
+      <div class="tulip-img-eyebrow">Nuestro tulipán especial</div>
+      <h3 class="tulip-img-title">Florecemos juntos 🌷</h3>
+      <p class="tulip-img-text">Como estos tulipanes, lo nuestro crece con paciencia, cariño y mucha luz. Cada pétalo es un momento que compartimos.</p>
+      <button class="tulip-img-btn" onclick="closeTulipImage()">Cerrar con cariño 💗</button>
+    </div>
+  </div>
+</div>
 
 <!-- ============ MARIPOSAS VOLADORAS ============ -->
 <div class="creatures-layer" id="creaturesLayer" style="display:none;">
@@ -901,22 +1146,105 @@
         </div>
 
         <div class="pet-creature" id="petCreature" onclick="petTouch()">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="bodyGrad" cx="45%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#f5a055"/>
+                <stop offset="100%" stop-color="#d4782a"/>
+              </radialGradient>
+              <radialGradient id="headGrad" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#f5a055"/>
+                <stop offset="100%" stop-color="#d4782a"/>
+              </radialGradient>
+              <radialGradient id="bellyGrad" cx="50%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#fff8ee"/>
+                <stop offset="100%" stop-color="#f5e6d0"/>
+              </radialGradient>
+            </defs>
             <g class="pet-bob">
-              <path class="pet-tail" d="M78,55 C95,50 96,68 82,68 C88,60 82,56 78,55Z" fill="#e8763c"/>
-              <ellipse cx="46" cy="58" rx="26" ry="20" fill="#f2884a"/>
-              <ellipse cx="46" cy="66" rx="16" ry="11" fill="#fff3e0"/>
-              <circle cx="66" cy="40" r="17" fill="#f2884a"/>
-              <path d="M56,26 L52,12 L62,22Z" fill="#f2884a"/>
-              <path d="M76,26 L82,12 L72,22Z" fill="#f2884a"/>
-              <path d="M57,25 L55,17 L60,22Z" fill="#c95a24"/>
-              <path d="M75,25 L77,17 L72,22Z" fill="#c95a24"/>
-              <ellipse cx="72" cy="46" rx="6" ry="7" fill="#fff3e0"/>
-              <circle cx="61" cy="38" r="2.6" fill="#2b1a0f"/>
-              <circle cx="72" cy="38" r="2.6" fill="#2b1a0f"/>
-              <ellipse cx="66.5" cy="45" rx="2.6" ry="1.8" fill="#2b1a0f"/>
-              <path class="pet-bow" id="petBow" d="M45,20 L52,14 L52,26Z M45,20 L38,14 L38,26Z" fill="#ff6f91"/>
-              <circle class="pet-bow" id="petBowKnot" cx="45" cy="20" r="3" fill="#e63357"/>
+              <!-- Sombra en el suelo -->
+              <ellipse cx="65" cy="92" rx="35" ry="4" fill="#3a6a3a" opacity="0.12"/>
+
+              <!-- COLA grande y esponjosa -->
+              <g class="pet-tail">
+                <path d="M100,54 C118,44 130,46 134,54 C138,62 134,74 118,72 C124,64 116,56 108,54Z" fill="#d4782a"/>
+                <path d="M104,52 C120,44 132,48 134,56 C130,62 122,66 114,64" fill="#f5a055" opacity="0.6"/>
+                <path d="M124,52 C130,50 134,54 132,60 C130,66 124,68 118,66" fill="#fff3e0" opacity="0.65"/>
+              </g>
+
+              <!-- CUERPO alargado -->
+              <ellipse cx="65" cy="64" rx="34" ry="16" fill="url(#bodyGrad)"/>
+              <!-- Panza blanca -->
+              <ellipse cx="65" cy="68" rx="24" ry="10" fill="url(#bellyGrad)"/>
+
+              <!-- COLA visible detrás del cuerpo -->
+              <path d="M96,58 C112,50 124,52 128,58 C132,64 126,72 112,70" fill="#d4782a" opacity="0.85"/>
+
+              <!-- PATAS -->
+              <ellipse cx="44" cy="82" rx="5" ry="4.5" fill="#c06820"/>
+              <ellipse cx="44" cy="83" rx="3.5" ry="3" fill="#e8a060"/>
+              <ellipse cx="58" cy="82" rx="5" ry="4.5" fill="#c06820"/>
+              <ellipse cx="58" cy="83" rx="3.5" ry="3" fill="#e8a060"/>
+              <ellipse cx="72" cy="82" rx="5" ry="4.5" fill="#c06820"/>
+              <ellipse cx="72" cy="83" rx="3.5" ry="3" fill="#e8a060"/>
+              <ellipse cx="86" cy="82" rx="5" ry="4.5" fill="#c06820"/>
+              <ellipse cx="86" cy="83" rx="3.5" ry="3" fill="#e8a060"/>
+
+              <!-- CUELLO -->
+              <ellipse cx="40" cy="58" rx="12" ry="10" fill="#f5a055"/>
+
+              <!-- CABEZA alargada -->
+              <ellipse cx="32" cy="44" rx="18" ry="15" fill="url(#headGrad)"/>
+
+              <!-- Hocico alargado -->
+              <ellipse cx="22" cy="48" rx="10" ry="7" fill="#f5a055"/>
+              <path d="M14,44 C14,38 20,34 28,34 C36,34 42,38 42,44 C42,50 36,56 28,58 C20,56 14,50 14,44Z" fill="#fff5e8" opacity="0.8"/>
+
+              <!-- Orejas puntiagudas -->
+              <path d="M22,32 L16,8 L34,26Z" fill="#f5a055"/>
+              <path d="M24,30 L19,12 L32,26Z" fill="#e8884a"/>
+              <path d="M25,29 L21,16 L30,26Z" fill="#fff3e0" opacity="0.45"/>
+              <path d="M44,32 L50,8 L36,26Z" fill="#f5a055"/>
+              <path d="M42,30 L47,12 L38,26Z" fill="#e8884a"/>
+              <path d="M41,29 L45,16 L36,26Z" fill="#fff3e0" opacity="0.45"/>
+
+              <!-- Ojos -->
+              <circle cx="26" cy="40" r="3.5" fill="#1a0e05"/>
+              <circle cx="38" cy="40" r="3.5" fill="#1a0e05"/>
+              <circle cx="27.2" cy="38.8" r="1.3" fill="#fff" opacity="0.9"/>
+              <circle cx="39.2" cy="38.8" r="1.3" fill="#fff" opacity="0.9"/>
+              <circle cx="25" cy="41" r="0.6" fill="#fff" opacity="0.5"/>
+              <circle cx="37" cy="41" r="0.6" fill="#fff" opacity="0.5"/>
+
+              <!-- Cejitas -->
+              <path d="M22,36 C24,35 26,35.5 28,36.5" stroke="#8a5020" stroke-width="0.7" fill="none" opacity="0.35"/>
+              <path d="M36,36.5 C38,35.5 40,35 42,36" stroke="#8a5020" stroke-width="0.7" fill="none" opacity="0.35"/>
+
+              <!-- Nariz -->
+              <ellipse cx="18" cy="46" rx="2.8" ry="2" fill="#2b1a05"/>
+              <ellipse cx="17.2" cy="45.5" rx="0.9" ry="0.6" fill="#5a4030" opacity="0.4"/>
+
+              <!-- Boca -->
+              <path d="M18,48 C16,50 14,50 13,49" stroke="#8a5020" stroke-width="0.7" fill="none" opacity="0.45"/>
+              <path d="M18,48 C20,50 22,50 23,49" stroke="#8a5020" stroke-width="0.7" fill="none" opacity="0.45"/>
+
+              <!-- Bigotes -->
+              <line x1="8" y1="44" x2="16" y2="46" stroke="#c09060" stroke-width="0.5" opacity="0.3"/>
+              <line x1="8" y1="48" x2="16" y2="48" stroke="#c09060" stroke-width="0.5" opacity="0.25"/>
+              <line x1="24" y1="46" x2="32" y2="44" stroke="#c09060" stroke-width="0.5" opacity="0.3"/>
+              <line x1="24" y1="48" x2="32" y2="48" stroke="#c09060" stroke-width="0.5" opacity="0.25"/>
+
+              <!-- Mejillas sonrojadas -->
+              <circle cx="20" cy="50" r="3" fill="#ff9eb6" opacity="0.3"/>
+              <circle cx="36" cy="50" r="3" fill="#ff9eb6" opacity="0.3"/>
+
+              <!-- LAZO -->
+              <g class="pet-bow" id="petBow">
+                <path d="M30,24 L38,16 L38,32Z" fill="#ff6f91"/>
+                <path d="M30,24 L22,16 L22,32Z" fill="#ff8faf"/>
+                <circle cx="30" cy="24" r="3.5" fill="#e63357"/>
+                <circle cx="30" cy="24" r="2" fill="#ff4d73"/>
+              </g>
             </g>
           </svg>
         </div>
@@ -980,9 +1308,6 @@
 
     <div class="footer">
       <a class="back-link" href="index.html">← Volver a nuestra carta</a>
-      <p class="footer-note">
-        ✏️ Para agregar tus fotos: guarda las imágenes junto a este archivo con los nombres foto1.jpg, foto2.jpg, foto3.jpg, foto4.jpg (o edita el código para más). Para escribir tus propios mensajitos, edita las listas al inicio del script, están bien marcadas.
-      </p>
     </div>
 
   </div>
@@ -1033,7 +1358,7 @@
     sunflower: [
       "Eres la razón por la que hasta los días grises se sienten soleados.",
       "Así como el girasol busca la luz, yo siempre te busco a ti.",
-      "Tu energía ilumina cualquier lugar en el que estés.",
+      "Nuestra energía juntos ilumina cualquier lugar.",
       "Contigo hasta lo simple se siente especial.",
       "Eres mi rayito de sol en los días difíciles.",
       "Me encanta cómo tu sonrisa cambia el clima de mi día.",
@@ -1042,11 +1367,11 @@
     ],
     lily: [
       "Tienes una calma que me tranquiliza incluso en mis peores días.",
-      "Eres pura elegancia, dentro y fuera.",
-      "Tu forma de ser es la definición de paz para mí.",
-      "Contigo todo se siente más ligero, más puro.",
+      "Eres puro amor, mi amor.",
+      "Tu forma de ser es la definición de perfección para mí.",
+      "Contigo todo se siente más puro.",
       "Admiro tu delicadeza y tu fuerza al mismo tiempo.",
-      "Eres de esas personas que hacen que el mundo se sienta más suave.",
+      "Eres de esas personas que hacen que el mundo se sienta más increible.",
       "Tu presencia siempre trae serenidad a mi vida.",
       "Contigo aprendí que la ternura también es una forma de fortaleza."
     ],
@@ -1062,29 +1387,29 @@
     ],
     tulip: [
       "Contigo cada día se siente como una nueva oportunidad de quererte mejor.",
-      "Eres bonita como una promesa cumplida.",
+      "Eres bonita como un gol de Bellingham.",
       "Tu forma de amar es de las cosas más lindas que conozco.",
       "Me encanta lo genuina que eres en todo lo que haces.",
       "Contigo todo florece, hasta yo.",
-      "Eres esa clase de persona que hace que el amor se sienta simple.",
+      "Eres esa clase de persona que hace ver que amar es algo sencillo y bonito.",
       "Cada vez que estoy contigo siento que empieza una primavera.",
-      "Gracias por dejarme ser parte de tu historia."
+      "Gracias por dejarme ser parte de tu vida."
     ],
     daisy: [
-      "Eres de esas personas simples y hermosas que hacen que la vida se sienta bonita sin esfuerzo.",
+      "Eres de esas personas hermosas que hacen que la vida se sienta bonita sin esfuerzo.",
       "Contigo hasta lo cotidiano se vuelve mi momento favorito del día.",
       "Me encanta lo auténtica que eres, sin filtros, sin máscaras.",
       "Eres esa clase de alegría pequeña que hace grande cualquier día.",
       "Contigo aprendí que no hace falta nada extraordinario para ser feliz, solo tenerte cerca.",
-      "Eres mi persona favorita para las cosas simples: hablar, reír, no hacer nada."
+      "Eres mi persona favorita para las cosas simples: hablar, reír, o para no trabajar jaja."
     ],
     lavender: [
       "Tienes esa calma que me hace respirar mejor cuando estoy contigo.",
       "Eres mi lugar seguro, mi manera de bajarle el ritmo al día.",
       "Contigo hasta el silencio se siente cómodo y bonito.",
       "Eres paz en forma de persona.",
-      "Me encanta cómo logras calmarme sin siquiera intentarlo.",
-      "Contigo todo se siente más suave, más tranquilo, más en casa."
+      "Me encanta cómo logras animarme sin siquiera intentarlo.",
+      "Mi amor te amo de aqui a la luna y de regreso, y eso es mucho más que infinito."
     ],
     butterfly: [
       "Como una mariposa, llegaste a mi vida sin avisar y la volviste más bonita.",
@@ -1133,10 +1458,22 @@
      y escribe en "caption" qué es lo que más te gusta de esa foto.
   ========================================================================= */
   const photos = [
-    { src: "foto1.jpg", caption: "De esta foto me enamoran tus ojos 👀💕" },
-    { src: "foto2.jpg", caption: "Aquí se nota lo hermosa que te ves cuando ríes así 😍" },
-    { src: "foto3.jpg", caption: "Esta foto me encanta, te ves demasiado atractiva 🔥❤️" },
-    { src: "foto4.jpg", caption: "Mi favorita, porque se nota lo feliz que te hace ese momento 🥹" }
+    { src: "jardin/ojitos.jpeg", caption: "De esta foto me enamoran tus ojos 👀💕" },
+    { src: "jardin/sonrisa.jpeg", caption: "Aquí se nota lo hermosa que te ves cuando ríes así 😍" },
+    { src: "jardin/coqueta.jpeg", caption: "Esta foto me encanta, te ves demasiado hermosa 🔥❤️" },
+    { src: "jardin/abrazo.jpeg", caption: "Mi favorita, porque se nota lo feliz que te hace ese momento 🥹" },
+    { src: "jardin/diosa.jpeg", caption: "Se te habla o se te reza? MI AMOOOOR 🛐" },
+    { src: "jardin/tierna.jpeg", caption: "De esta foto me encanta tu mirada tan tierna 🥰" },
+    { src: "jardin/mano.jpeg", caption: "De esta foto me encanta que me dijiste, Saca una fotito de nuestras manitas así 💞"}, 
+    { src: "jardin/linda.jpeg", caption: "Que rara forma de pedirme matrimonio, ACEPTOO 😍" },
+    { src: "jardin/punito.jpeg", caption: "Nuestras nailss 💅🏻" },
+    { src: "jardin/columpio.jpeg", caption: "De esta foto me encanta tu valentía mi amor y que lograste subirte un ratito 💗" },
+    { src: "jardin/pelito.jpeg", caption: "Me encanta como se ve tu pelo en esta foto, siempre se ve increible 💫" },
+    { src: "jardin/nina.jpeg", caption: "De esta foto me encanta lo niña buena que pareces, te ves demasiado preciosa amor" },
+    { src: "jardin/ojitos2.jpeg", caption: "Hmm de esta me encantan tus ojos, pero así demasiadooo 😘😘" },
+    { src: "jardin/maquillaje.jpeg", caption: "Aquí me encanta como te quedó tu maquillaje mi amor te ves espectacular 💄" },
+    { src: "jardin/amor.jpeg", caption: "Ay no de verdad que te amo tanto, sos demasiadooo 💓💓💓" },
+    { src: "jardin/ojitos4.jpeg", caption: "De verdad que eres hermosa mi amor, eres una princesa, eres la mujer más hermosa del universo, mis ojos te miran de una manera tan especial mi amor, que nunca olvidaré. Sos arte mi amor, mereces ser contemplada como tal. Te amo mi amor, sigamos coleccionando recuerdos, y sigueme enviando fotitos mi amor que yo las guardo en mi corazón, porqué eres la mejor 💘." }
   ];
 
   const flowerMeta = {
@@ -1215,7 +1552,11 @@
       btn.setAttribute('aria-label', flowerMeta[type].name);
       btn.style.transform = `rotate(${(Math.random()*10 - 5).toFixed(1)}deg)`;
       btn.innerHTML = svgFn();
-      btn.addEventListener('click', () => openMessage(type));
+      if(type === 'tulip' && i === 0){
+        btn.addEventListener('click', () => openTulipImage());
+      } else {
+        btn.addEventListener('click', () => openMessage(type));
+      }
       row.appendChild(btn);
     }
   }
@@ -1236,7 +1577,7 @@
         <img src="${p.src}" alt="Foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="placeholder" style="display:none;">
           <span class="plus">+</span>
-          <div class="hint">Guarda tu imagen como<br><b>${p.src}</b></div>
+          <div class="hint">Próxima foto que me va a<br>enamorar aún más...</div>
         </div>
       </div>
       <div class="polaroid-caption">${p.caption}</div>
@@ -1304,6 +1645,24 @@
     }
   }
 
+  /* ===== Modal imagen del sol ===== */
+  function openSunImage(){
+    document.getElementById('sunImgOverlay').classList.add('show');
+  }
+  function closeSunImage(e){
+    if(e && e.target !== document.getElementById('sunImgOverlay')) return;
+    document.getElementById('sunImgOverlay').classList.remove('show');
+  }
+
+  /* ===== Modal imagen del tulipán ===== */
+  function openTulipImage(){
+    document.getElementById('tulipImgOverlay').classList.add('show');
+  }
+  function closeTulipImage(e){
+    if(e && e.target !== document.getElementById('tulipImgOverlay')) return;
+    document.getElementById('tulipImgOverlay').classList.remove('show');
+  }
+
   /* ===== Bienvenida ===== */
   function openGate(){
     document.getElementById('seedBtn').classList.add('blooming');
@@ -1311,6 +1670,7 @@
       document.getElementById('gate').classList.add('hide');
       document.getElementById('content').classList.add('show');
       document.getElementById('creaturesLayer').style.display = 'block';
+      document.getElementById('sunBtn').classList.add('show');
     }, 500);
   }
 
