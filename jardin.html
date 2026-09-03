@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tu jardín de amor 🌻🌷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky1:#cdeefb; --sky2:#eaf7ee; --sky3:#fff6e5;
+    --grass1:#8fc37c; --grass2:#6fa85e;
+    --wood:#8a5a35; --wood-dark:#6b4324;
+    --sun-yellow:#ffce3d; --sun-brown:#7a4a1e;
+    --lily-white:#fdfaff; --lily-purple:#c9a4ec;
+    --rose-red:#e63357; --rose-dark:#9c1d34;
+    --tulip-pink:#ff7aa2; --tulip-dark:#c94a71;
+    --daisy-white:#ffffff; --daisy-yellow:#ffce3d;
+    --lav-purple:#9b7fd4; --lav-dark:#6a4c94;
+    --ink:#4a3b2a; --card:#fffdf8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins', sans-serif;
+    background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 45%, var(--sky3) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  #petals-canvas{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+  /* ============ BIENVENIDA ============ */
+  #gate{
+    position:fixed; inset:0; z-index:90;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background: radial-gradient(ellipse at 50% 30%, #dff3e4 0%, #bfe6cf 60%, #9fd2b6 100%);
+    transition:opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #gate.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  .gate-card{
+    max-width:380px; width:100%;
+    text-align:center;
+  }
+
+  .gate-eyebrow{
+    font-size:0.75rem; letter-spacing:3px; text-transform:uppercase;
+    color:#4a7a55; font-weight:600; margin-bottom:8px;
+  }
+
+  .gate-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(2.1rem, 9vw, 2.8rem);
+    color:#2f5a3a;
+    margin-bottom:10px;
+    line-height:1.1;
+  }
+
+  .gate-text{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:0.95rem;
+    color:#3f5f47;
+    line-height:1.6;
+    margin-bottom:34px;
+  }
+
+  .seed-btn{
+    background:none; border:none; cursor:pointer;
+    width:110px; height:110px;
+    margin:0 auto;
+    display:block;
+    position:relative;
+  }
+  .seed-btn svg{ width:100%; height:100%; }
+
+  .seed-btn .bloom-anim{
+    transform-origin:50% 90%;
+    animation: seedIdle 2.6s ease-in-out infinite;
+  }
+  @keyframes seedIdle{
+    0%,100%{ transform:scale(1) rotate(0deg); }
+    50%{ transform:scale(1.05) rotate(-2deg); }
+  }
+
+  .seed-hint{
+    margin-top:18px;
+    font-size:0.85rem;
+    color:#4a7a55;
+    letter-spacing:0.3px;
+  }
+
+  /* animación de floración al hacer click */
+  .seed-btn.blooming .bloom-anim{ animation: seedBloom 0.9s ease forwards; }
+  @keyframes seedBloom{
+    0%{ transform:scale(1) rotate(0deg); }
+    40%{ transform:scale(1.5) rotate(6deg); }
+    100%{ transform:scale(2.6) rotate(0deg); opacity:0; }
+  }
+
+  /* ============ CONTENIDO ============ */
+  #content{ display:none; position:relative; z-index:2; }
+  #content.show{ display:block; animation: contentIn 1s ease; }
+  @keyframes contentIn{
+    from{ opacity:0; transform:translateY(16px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .wrap{
+    max-width:960px; margin:0 auto;
+    padding:clamp(20px,6vw,40px) clamp(14px,4vw,22px) clamp(50px,10vw,90px);
+  }
+
+  .hero{ text-align:center; padding:clamp(10px,4vw,20px) 8px clamp(10px,4vw,20px); }
+  .hero-eyebrow{
+    font-size:0.75rem; letter-spacing:3px; text-transform:uppercase;
+    color:#4a7a55; font-weight:600; margin-bottom:6px;
+  }
+  .hero-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(2.4rem, 10vw, 3.4rem);
+    color:#2f5a3a;
+    line-height:1.05;
+  }
+  .hero-sub{
+    font-family:'Playfair Display', serif; font-style:italic;
+    font-size:clamp(0.85rem, 3vw, 1rem);
+    color:#4a6b50; margin-top:8px;
+  }
+
+  /* ===== CRIATURAS: mariposas voladoras ===== */
+  .creatures-layer{
+    position:fixed; inset:0; z-index:8; pointer-events:none;
+  }
+  .butterfly-btn{
+    position:absolute;
+    background:none; border:none; cursor:pointer;
+    width:38px; height:38px;
+    pointer-events:auto;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,0.15));
+  }
+  .butterfly-btn svg{ width:100%; height:100%; }
+  .butterfly-btn .wing-l, .butterfly-btn .wing-r{
+    transform-origin:50% 50%;
+    animation: flap 0.5s ease-in-out infinite;
+  }
+  .butterfly-btn .wing-r{ animation-delay:0.05s; }
+  @keyframes flap{
+    0%,100%{ transform:scaleX(1); }
+    50%{ transform:scaleX(0.55); }
+  }
+  .butterfly-btn:hover{ transform: scale(1.15); }
+
+  .bf1{ animation: flyPath1 16s linear infinite; }
+  .bf2{ animation: flyPath2 21s linear infinite; }
+  .bf3{ animation: flyPath3 18s linear infinite; }
+
+  @keyframes flyPath1{
+    0%{ top:14%; left:6%; }
+    20%{ top:22%; left:30%; }
+    40%{ top:12%; left:55%; }
+    60%{ top:28%; left:75%; }
+    80%{ top:16%; left:50%; }
+    100%{ top:14%; left:6%; }
+  }
+  @keyframes flyPath2{
+    0%{ top:40%; left:80%; }
+    25%{ top:55%; left:60%; }
+    50%{ top:45%; left:35%; }
+    75%{ top:60%; left:15%; }
+    100%{ top:40%; left:80%; }
+  }
+  @keyframes flyPath3{
+    0%{ top:70%; left:20%; }
+    30%{ top:60%; left:45%; }
+    60%{ top:75%; left:70%; }
+    100%{ top:70%; left:20%; }
+  }
+
+  @media (max-width:600px){
+    .butterfly-btn{ width:30px; height:30px; }
+  }
+
+  /* ===== ÁRBOL PRINCIPAL ===== */
+  .tree-scene{
+    position:relative;
+    margin:clamp(20px,6vw,36px) auto 10px;
+    max-width:340px;
+    cursor:pointer;
+    text-align:center;
+  }
+  .tree-scene svg{ width:100%; height:auto; overflow:visible; }
+  .tree-leaves{ animation: treeSway 5s ease-in-out infinite; transform-origin:50% 85%; }
+  @keyframes treeSway{
+    0%,100%{ transform:rotate(-1.2deg); }
+    50%{ transform:rotate(1.2deg); }
+  }
+  .tree-hint{
+    margin-top:10px;
+    font-size:0.78rem;
+    color:#4a7a55;
+    font-style:italic;
+  }
+
+  .bird-btn{
+    position:absolute;
+    background:none; border:none; cursor:pointer;
+    width:34px; height:34px;
+    transition:transform 0.2s ease;
+  }
+  .bird-btn svg{ width:100%; height:100%; }
+  .bird-btn:hover{ transform:translateY(-3px) scale(1.1); }
+  .bird-btn.b1{ top:20%; left:22%; }
+  .bird-btn.b2{ top:14%; right:20%; transform:scaleX(-1); }
+  .bird-btn.b2:hover{ transform:scaleX(-1) translateY(-3px) scale(1.1); }
+  .bird-btn.singing{ animation: birdBounce 0.5s ease 2; }
+  @keyframes birdBounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
+  /* ===== MASCOTA MÁGICA DEL JARDÍN ===== */
+  .pet-section{
+    max-width:480px; margin:8px auto 0;
+    text-align:center;
+  }
+  .pet-habitat{
+    position:relative;
+    border-radius:22px;
+    overflow:hidden;
+    height:clamp(200px, 42vw, 260px);
+    background: linear-gradient(180deg, #eafbe8 0%, #cdeecb 62%, #a9d98f 100%);
+    box-shadow:0 16px 36px rgba(70,120,60,0.22);
+    border:1px solid rgba(255,255,255,0.5);
+  }
+  .pet-habitat::before{
+    content:'';
+    position:absolute; left:0; right:0; bottom:0; height:34%;
+    background: linear-gradient(180deg, #8fc37c, #6fa85e);
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .pet-habitat .habitat-flower{
+    position:absolute; bottom:8%;
+    width:16px; height:16px;
+    opacity:0.85;
+  }
+
+  .pet-bar{
+    position:absolute; top:10px; left:10px; right:10px;
+    display:flex; align-items:center; gap:8px;
+    z-index:3;
+  }
+  .pet-name-tag{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:1rem;
+    color:#3f5f3a;
+    background:rgba(255,255,255,0.75);
+    padding:3px 12px;
+    border-radius:20px;
+  }
+  .pet-affection-track{
+    flex:1;
+    height:9px;
+    background:rgba(255,255,255,0.6);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .pet-affection-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, #ff9eb6, #ff6f91);
+    border-radius:10px;
+    transition:width 0.5s ease;
+  }
+  .pet-affection-num{
+    font-size:0.68rem;
+    color:#3f5f3a;
+    font-weight:600;
+    white-space:nowrap;
+  }
+
+  .pet-creature{
+    position:absolute;
+    bottom:16%;
+    left:50%;
+    width:78px; height:78px;
+    transform:translateX(-50%);
+    cursor:pointer;
+    z-index:2;
+    transition:transform 0.05s linear;
+  }
+  .pet-creature svg{ width:100%; height:100%; overflow:visible; }
+  .pet-creature.face-left{ transform:translateX(-50%) scaleX(-1); }
+
+  .pet-creature .pet-bob{
+    animation: petBob 1.6s ease-in-out infinite;
+    transform-origin:50% 100%;
+  }
+  @keyframes petBob{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-3px) rotate(-1deg); }
+  }
+  .pet-creature .pet-tail{
+    animation: tailWag 0.7s ease-in-out infinite;
+    transform-origin:85% 60%;
+  }
+  @keyframes tailWag{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(18deg); }
+  }
+  .pet-creature.happy .pet-bob{ animation: petJump 0.5s ease-in-out 3; }
+  @keyframes petJump{
+    0%,100%{ transform:translateY(0); }
+    40%{ transform:translateY(-16px); }
+  }
+  .pet-creature.eating .pet-bob{ animation: petNod 0.35s ease-in-out 4; }
+  @keyframes petNod{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(3px) rotate(6deg); }
+  }
+
+  .pet-sparkle{
+    position:absolute; inset:0;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.6s ease;
+  }
+  .pet-sparkle.on{ opacity:1; }
+  .pet-sparkle span{
+    position:absolute;
+    font-size:0.8rem;
+    animation: sparkleFloat 2.4s ease-in-out infinite;
+  }
+  @keyframes sparkleFloat{
+    0%,100%{ opacity:0.2; transform:translateY(0) scale(0.8); }
+    50%{ opacity:1; transform:translateY(-6px) scale(1.1); }
+  }
+
+  .pet-bow{
+    opacity:0;
+    transition:opacity 0.5s ease;
+  }
+  .pet-bow.show{ opacity:1; }
+
+  .pet-controls{
+    display:flex; gap:10px; justify-content:center;
+    margin-top:16px; flex-wrap:wrap;
+  }
+  .pet-action-btn{
+    font-family:'Poppins', sans-serif; font-weight:600; font-size:0.82rem;
+    padding:10px 18px; border-radius:22px; cursor:pointer; border:none;
+    background:linear-gradient(135deg, #ff9eb6, #ff6f91);
+    color:#fff;
+    box-shadow:0 6px 14px rgba(255,111,145,0.3);
+    transition:transform 0.15s ease;
+  }
+  .pet-action-btn.feed{ background:linear-gradient(135deg, #ffce3d, #e6a800); box-shadow:0 6px 14px rgba(230,168,0,0.3); }
+  .pet-action-btn:active{ transform:scale(0.95); }
+
+  .pet-hint{
+    margin-top:10px;
+    font-size:0.78rem;
+    color:#4a7a55;
+    font-style:italic;
+  }
+
+  .pet-heart-layer{
+    position:absolute; inset:0;
+    pointer-events:none;
+    overflow:visible;
+  }
+  .pet-float-heart{
+    position:absolute;
+    font-size:1.1rem;
+    animation: heartFloatUp 1.4s ease-out forwards;
+  }
+  @keyframes heartFloatUp{
+    0%{ opacity:1; transform:translateY(0) scale(0.8); }
+    100%{ opacity:0; transform:translateY(-60px) scale(1.2); }
+  }
+
+  /* ===== VIVERO / SECCIONES DE FLORES ===== */
+  .bed-section{ margin-top:clamp(40px,9vw,60px); }
+  .bed-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.7rem, 6vw, 2.1rem);
+    text-align:center;
+    margin-bottom:4px;
+  }
+  .bed-title.sun{ color:#a86c14; }
+  .bed-title.lily{ color:#6a4c94; }
+  .bed-title.rose{ color:var(--rose-dark); }
+  .bed-title.tulip{ color:var(--tulip-dark); }
+
+  .bed-subtitle{
+    text-align:center;
+    font-size:0.78rem;
+    color:#6b6b6b;
+    margin-bottom:20px;
+    font-style:italic;
+  }
+
+  .bed-row{
+    display:flex; flex-wrap:wrap;
+    justify-content:center;
+    gap:clamp(8px, 2.4vw, 16px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0.08));
+    border-radius:24px;
+    padding:clamp(16px,4vw,26px) clamp(10px,3vw,20px) clamp(20px,4vw,28px);
+    border:1px solid rgba(0,0,0,0.04);
+  }
+
+  .flower-btn{
+    background:none; border:none; cursor:pointer;
+    width:clamp(52px, 13vw, 70px);
+    height:clamp(52px, 13vw, 70px);
+    transition:transform 0.25s ease;
+  }
+  .flower-btn svg{ width:100%; height:100%; }
+  .flower-btn:hover{ transform:translateY(-6px) scale(1.08); }
+  .flower-btn:active{ transform:translateY(-2px) scale(0.96); }
+
+  /* ===== RINCÓN DE FOTOS ===== */
+  .photo-section{ margin-top:clamp(46px,9vw,66px); }
+  .photo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(min(190px,100%),1fr));
+    gap:clamp(16px,4vw,24px);
+  }
+  .polaroid{
+    background:#fff;
+    padding:10px 10px 0;
+    border-radius:4px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.12);
+    transform:rotate(var(--rot,0deg));
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .polaroid:nth-child(2n){ --rot:2deg; }
+  .polaroid:nth-child(3n){ --rot:-2.4deg; }
+  .polaroid:nth-child(5n){ --rot:1.2deg; }
+  .polaroid:hover{ transform:rotate(0deg) translateY(-4px); box-shadow:0 16px 30px rgba(0,0,0,0.18); }
+
+  .polaroid-photo{
+    width:100%; aspect-ratio:1/1;
+    border-radius:2px; overflow:hidden;
+    background:linear-gradient(160deg, #eef6e8, #dcefd6);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .polaroid-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .polaroid-photo .placeholder{ text-align:center; padding:10px; color:#7a9a7f; }
+  .polaroid-photo .placeholder .plus{ font-size:2rem; display:block; margin-bottom:4px; color:#4a7a55; }
+  .polaroid-photo .placeholder .hint{ font-size:0.62rem; line-height:1.4; }
+
+  .polaroid-caption{
+    font-family:'Caveat', cursive;
+    font-size:1.15rem;
+    text-align:center;
+    color:#4a3b2a;
+    padding:10px 4px 14px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{ text-align:center; margin-top:64px; }
+  .back-link{
+    display:inline-block;
+    font-family:'Caveat', cursive; font-weight:700;
+    letter-spacing:0.5px; font-size:1.15rem;
+    color:#fff; background: linear-gradient(135deg, #6fa85e, #4a7a55);
+    padding:12px 28px; border-radius:30px; text-decoration:none;
+    box-shadow:0 8px 20px rgba(74,122,85,0.3);
+    transition:transform 0.2s ease;
+  }
+  .back-link:hover{ transform:translateY(-3px); }
+  .footer-note{ margin-top:14px; font-size:0.72rem; color:#7a8a7d; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.5; }
+
+  /* ============ MODAL DE MENSAJE ============ */
+  .msg-overlay{
+    position:fixed; inset:0; z-index:80;
+    background:rgba(40,60,40,0.45);
+    backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center;
+    padding:22px;
+  }
+  .msg-overlay.show{ display:flex; animation: contentIn 0.4s ease; }
+
+  .msg-card{
+    background:var(--card);
+    border-radius:22px;
+    padding:32px 26px 26px;
+    max-width:360px; width:100%;
+    text-align:center;
+    box-shadow:0 24px 50px rgba(0,0,0,0.25);
+    position:relative;
+  }
+  .msg-icon{ font-size:2.2rem; margin-bottom:12px; display:inline-block; }
+  .msg-flower-name{
+    font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;
+    color:#9a9a9a; margin-bottom:10px; font-weight:600;
+  }
+  .msg-text{
+    font-family:'Playfair Display', serif; font-style:italic;
+    font-size:1.05rem; line-height:1.7; color:#4a3b2a;
+    margin-bottom:24px;
+  }
+  .msg-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .msg-btn{
+    font-family:'Poppins', sans-serif; font-weight:600; font-size:0.82rem;
+    padding:10px 18px; border-radius:22px; cursor:pointer; border:none;
+  }
+  .msg-btn.again{ background:linear-gradient(135deg, #ffce3d, #e6a800); color:#4a3208; }
+  .msg-btn.close{ background:none; border:1.5px solid #cfcfcf; color:#6b6b6b; }
+
+  @media (max-width:480px){
+    .msg-card{ padding:26px 20px 22px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="petals-canvas"></canvas>
+
+<!-- ============ MARIPOSAS VOLADORAS ============ -->
+<div class="creatures-layer" id="creaturesLayer" style="display:none;">
+  <button class="butterfly-btn bf1" aria-label="Mariposa" onclick="openMessage('butterfly', this)">
+    <svg viewBox="0 0 40 40"><g>
+      <ellipse class="wing-l" cx="14" cy="18" rx="10" ry="8" fill="#ffb6c1"/>
+      <ellipse class="wing-r" cx="26" cy="18" rx="10" ry="8" fill="#ff9eb6"/>
+      <ellipse cx="20" cy="18" rx="1.6" ry="10" fill="#7a4a1e"/>
+    </g></svg>
+  </button>
+  <button class="butterfly-btn bf2" aria-label="Mariposa" onclick="openMessage('butterfly', this)">
+    <svg viewBox="0 0 40 40"><g>
+      <ellipse class="wing-l" cx="14" cy="18" rx="10" ry="8" fill="#c9a4ec"/>
+      <ellipse class="wing-r" cx="26" cy="18" rx="10" ry="8" fill="#a97fe0"/>
+      <ellipse cx="20" cy="18" rx="1.6" ry="10" fill="#4a3b2a"/>
+    </g></svg>
+  </button>
+  <button class="butterfly-btn bf3" aria-label="Mariposa" onclick="openMessage('butterfly', this)">
+    <svg viewBox="0 0 40 40"><g>
+      <ellipse class="wing-l" cx="14" cy="18" rx="10" ry="8" fill="#ffce3d"/>
+      <ellipse class="wing-r" cx="26" cy="18" rx="10" ry="8" fill="#ffb347"/>
+      <ellipse cx="20" cy="18" rx="1.6" ry="10" fill="#7a4a1e"/>
+    </g></svg>
+  </button>
+</div>
+
+<!-- ============ BIENVENIDA ============ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-eyebrow">Un lugar solo para ti</div>
+    <h1 class="gate-title">Antes de entrar,<br>planta esta semillita</h1>
+    <p class="gate-text">"Detrás de esta semilla crece un jardín entero de cosas que quiero decirte."</p>
+    <button class="seed-btn" id="seedBtn" onclick="openGate()" aria-label="Tocar semilla para entrar">
+      <svg class="bloom-anim" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="78" rx="30" ry="6" fill="#4a7a55" opacity="0.25"/>
+        <path d="M50,78 C50,60 50,45 50,32" stroke="#5a8a4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M50,55 C42,50 36,52 33,58 C40,60 46,58 50,55Z" fill="#6fa85e"/>
+        <path d="M50,45 C58,40 64,42 67,48 C60,50 54,48 50,45Z" fill="#7fb86a"/>
+        <g transform="translate(50,26)">
+          <ellipse rx="9" ry="12" fill="#8a5a35"/>
+          <ellipse rx="6" ry="8" fill="#a5713f"/>
+        </g>
+      </svg>
+    </button>
+    <p class="seed-hint">🌱 Toca la semilla</p>
+  </div>
+</div>
+
+<!-- ============ CONTENIDO ============ -->
+<div id="content">
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Bienvenida a</div>
+      <h1 class="hero-title">El Jardín de Nosotros</h1>
+      <p class="hero-sub">— un rincón para respirar, y para sentirte amada —</p>
+    </div>
+
+    <!-- ÁRBOL PRINCIPAL -->
+    <div class="tree-scene">
+      <button class="bird-btn b1" aria-label="Pajarito" onclick="event.stopPropagation(); openMessage('bird', this);">
+        <svg viewBox="0 0 40 40"><g>
+          <ellipse cx="20" cy="22" rx="10" ry="8" fill="#e8955c"/>
+          <circle cx="30" cy="16" r="6" fill="#e8955c"/>
+          <path d="M35,16 L40,17 L35,19Z" fill="#d4741f"/>
+          <circle cx="32" cy="14" r="1.3" fill="#2b1a0f"/>
+          <path d="M12,20 C6,18 4,22 8,26 C10,24 12,22 12,20Z" fill="#f2b07e"/>
+        </g></svg>
+      </button>
+      <button class="bird-btn b2" aria-label="Pajarito" onclick="event.stopPropagation(); openMessage('bird', this);">
+        <svg viewBox="0 0 40 40"><g>
+          <ellipse cx="20" cy="22" rx="10" ry="8" fill="#7fa8d9"/>
+          <circle cx="30" cy="16" r="6" fill="#7fa8d9"/>
+          <path d="M35,16 L40,17 L35,19Z" fill="#4a6ea5"/>
+          <circle cx="32" cy="14" r="1.3" fill="#2b1a0f"/>
+          <path d="M12,20 C6,18 4,22 8,26 C10,24 12,22 12,20Z" fill="#a9c6e8"/>
+        </g></svg>
+      </button>
+      <div onclick="openMessage('tree')" style="cursor:pointer;">
+      <svg viewBox="0 0 240 260" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="120" cy="245" rx="85" ry="12" fill="#6fa85e" opacity="0.3"/>
+        <path d="M120,245 L120,140" stroke="#6b4324" stroke-width="16" stroke-linecap="round"/>
+        <path d="M110,245 C100,210 95,180 110,150" stroke="#5a361c" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <g class="tree-leaves">
+          <circle cx="120" cy="95" r="70" fill="#7fbe66"/>
+          <circle cx="70" cy="120" r="52" fill="#6fa85e"/>
+          <circle cx="170" cy="120" r="52" fill="#6fa85e"/>
+          <circle cx="120" cy="60" r="46" fill="#8fce76"/>
+          <circle cx="95" cy="100" r="6" fill="#ffb6c1" opacity="0.8"/>
+          <circle cx="150" cy="90" r="5" fill="#ffd166" opacity="0.8"/>
+          <circle cx="130" cy="130" r="5" fill="#ff9eb6" opacity="0.8"/>
+          <circle cx="80" cy="70" r="4" fill="#fff2a8" opacity="0.8"/>
+        </g>
+        <g font-family="Caveat, cursive" font-size="22" fill="#4a3b2a" opacity="0.75">
+          <text x="120" y="200" text-anchor="middle">❤</text>
+        </g>
+      </svg>
+      </div>
+      <p class="tree-hint">Toca el árbol (o a los pajaritos) para leer un mensaje especial 🌳💌</p>
+    </div>
+
+    <!-- MASCOTA MÁGICA DEL JARDÍN -->
+    <div class="pet-section">
+      <div class="pet-habitat" id="petHabitat">
+        <div class="pet-bar">
+          <span class="pet-name-tag">🦊 Rayito</span>
+          <div class="pet-affection-track">
+            <div class="pet-affection-fill" id="petAffectionFill"></div>
+          </div>
+          <span class="pet-affection-num" id="petAffectionNum">0</span>
+        </div>
+
+        <span class="habitat-flower" style="left:10%;">🌼</span>
+        <span class="habitat-flower" style="left:28%;">🌸</span>
+        <span class="habitat-flower" style="left:68%;">🌷</span>
+        <span class="habitat-flower" style="left:85%;">🌼</span>
+
+        <div class="pet-heart-layer" id="petHeartLayer"></div>
+
+        <div class="pet-sparkle" id="petSparkle">
+          <span style="left:20%; top:20%;">✨</span>
+          <span style="left:75%; top:15%; animation-delay:0.6s;">✨</span>
+          <span style="left:50%; top:10%; animation-delay:1.2s;">✨</span>
+        </div>
+
+        <div class="pet-creature" id="petCreature" onclick="petTouch()">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="pet-bob">
+              <path class="pet-tail" d="M78,55 C95,50 96,68 82,68 C88,60 82,56 78,55Z" fill="#e8763c"/>
+              <ellipse cx="46" cy="58" rx="26" ry="20" fill="#f2884a"/>
+              <ellipse cx="46" cy="66" rx="16" ry="11" fill="#fff3e0"/>
+              <circle cx="66" cy="40" r="17" fill="#f2884a"/>
+              <path d="M56,26 L52,12 L62,22Z" fill="#f2884a"/>
+              <path d="M76,26 L82,12 L72,22Z" fill="#f2884a"/>
+              <path d="M57,25 L55,17 L60,22Z" fill="#c95a24"/>
+              <path d="M75,25 L77,17 L72,22Z" fill="#c95a24"/>
+              <ellipse cx="72" cy="46" rx="6" ry="7" fill="#fff3e0"/>
+              <circle cx="61" cy="38" r="2.6" fill="#2b1a0f"/>
+              <circle cx="72" cy="38" r="2.6" fill="#2b1a0f"/>
+              <ellipse cx="66.5" cy="45" rx="2.6" ry="1.8" fill="#2b1a0f"/>
+              <path class="pet-bow" id="petBow" d="M45,20 L52,14 L52,26Z M45,20 L38,14 L38,26Z" fill="#ff6f91"/>
+              <circle class="pet-bow" id="petBowKnot" cx="45" cy="20" r="3" fill="#e63357"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="pet-controls">
+        <button class="pet-action-btn" onclick="petTouch()">Acariciar 🤍</button>
+        <button class="pet-action-btn feed" onclick="petFeed()">Dar una flor 🌸</button>
+      </div>
+      <p class="pet-hint" id="petHintText">Rayito vive en el jardín. Mientras más cariño le des, más feliz se pone 🦊💛</p>
+    </div>
+
+    <!-- GIRASOLES -->
+    <div class="bed-section">
+      <h2 class="bed-title sun">Girasoles 🌻</h2>
+      <p class="bed-subtitle">Toca uno para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-sunflower"></div>
+    </div>
+
+    <!-- LIRIOS -->
+    <div class="bed-section">
+      <h2 class="bed-title lily">Lirios 🤍</h2>
+      <p class="bed-subtitle">Toca uno para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-lily"></div>
+    </div>
+
+    <!-- ROSAS -->
+    <div class="bed-section">
+      <h2 class="bed-title rose">Rosas 🌹</h2>
+      <p class="bed-subtitle">Toca una para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-rose"></div>
+    </div>
+
+    <!-- TULIPANES -->
+    <div class="bed-section">
+      <h2 class="bed-title tulip">Tulipanes 🌷</h2>
+      <p class="bed-subtitle">Toca uno para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-tulip"></div>
+    </div>
+
+    <!-- MARGARITAS -->
+    <div class="bed-section">
+      <h2 class="bed-title" style="color:#c9a227;">Margaritas 🌼</h2>
+      <p class="bed-subtitle">Toca una para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-daisy"></div>
+    </div>
+
+    <!-- LAVANDA -->
+    <div class="bed-section">
+      <h2 class="bed-title" style="color:#6a4c94;">Lavanda 💜</h2>
+      <p class="bed-subtitle">Toca una para descubrir un mensajito</p>
+      <div class="bed-row" id="bed-lavender"></div>
+    </div>
+
+    <!-- RINCÓN DE FOTOS -->
+    <div class="photo-section">
+      <h2 class="bed-title" style="color:#4a7a55;">Rincón de fotos 📸</h2>
+      <p class="bed-subtitle">Cositas que amo de ti, en cada una</p>
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+
+    <div class="footer">
+      <a class="back-link" href="index.html">← Volver a nuestra carta</a>
+      <p class="footer-note">
+        ✏️ Para agregar tus fotos: guarda las imágenes junto a este archivo con los nombres foto1.jpg, foto2.jpg, foto3.jpg, foto4.jpg (o edita el código para más). Para escribir tus propios mensajitos, edita las listas al inicio del script, están bien marcadas.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ MODAL DE MENSAJE ============ -->
+<div class="msg-overlay" id="msgOverlay">
+  <div class="msg-card">
+    <div class="msg-icon" id="msgIcon">🌻</div>
+    <div class="msg-flower-name" id="msgFlowerName">Girasol</div>
+    <p class="msg-text" id="msgText">Mensaje</p>
+    <div class="msg-actions">
+      <button class="msg-btn again" id="msgAgainBtn" onclick="rerollMessage()">Ver otro mensaje 🌸</button>
+      <button class="msg-btn close" onclick="closeMessage()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =========================================================================
+     ✏️ EDITA AQUÍ TUS MENSAJES
+     Agrega, quita o cambia las frases que quieras dentro de cada lista.
+     No hay límite de cantidad — mientras más pongas, más variedad tendrá
+     el jardín. Cada vez que ella toque una flor, verá un mensaje al azar
+     de esa categoría.
+  ========================================================================= */
+  const messages = {
+    sunflower: [
+      "Eres la razón por la que hasta los días grises se sienten soleados.",
+      "Así como el girasol busca la luz, yo siempre te busco a ti.",
+      "Tu energía ilumina cualquier lugar en el que estés.",
+      "Contigo hasta lo simple se siente especial.",
+      "Eres mi rayito de sol en los días difíciles.",
+      "Me encanta cómo tu sonrisa cambia el clima de mi día.",
+      "Eres esa clase de persona que hace que todo valga la pena.",
+      "Gracias por ser mi lugar favorito para volver."
+    ],
+    lily: [
+      "Tienes una calma que me tranquiliza incluso en mis peores días.",
+      "Eres pura elegancia, dentro y fuera.",
+      "Tu forma de ser es la definición de paz para mí.",
+      "Contigo todo se siente más ligero, más puro.",
+      "Admiro tu delicadeza y tu fuerza al mismo tiempo.",
+      "Eres de esas personas que hacen que el mundo se sienta más suave.",
+      "Tu presencia siempre trae serenidad a mi vida.",
+      "Contigo aprendí que la ternura también es una forma de fortaleza."
+    ],
+    rose: [
+      "Eres hermosa, pero lo que más amo es cómo eres por dentro.",
+      "Cada día encuentro una razón nueva para quererte más.",
+      "Eres mi persona favorita en cualquier versión de mi vida.",
+      "Contigo el amor se siente fácil, natural, real.",
+      "Eres el amor más bonito que me ha tocado vivir.",
+      "No hay nadie como tú, y por eso te elijo una y otra vez.",
+      "Amo cada detalle tuyo, hasta los que tú crees pequeños.",
+      "Eres mi persona favorita para reír, para hablar, para todo."
+    ],
+    tulip: [
+      "Contigo cada día se siente como una nueva oportunidad de quererte mejor.",
+      "Eres bonita como una promesa cumplida.",
+      "Tu forma de amar es de las cosas más lindas que conozco.",
+      "Me encanta lo genuina que eres en todo lo que haces.",
+      "Contigo todo florece, hasta yo.",
+      "Eres esa clase de persona que hace que el amor se sienta simple.",
+      "Cada vez que estoy contigo siento que empieza una primavera.",
+      "Gracias por dejarme ser parte de tu historia."
+    ],
+    daisy: [
+      "Eres de esas personas simples y hermosas que hacen que la vida se sienta bonita sin esfuerzo.",
+      "Contigo hasta lo cotidiano se vuelve mi momento favorito del día.",
+      "Me encanta lo auténtica que eres, sin filtros, sin máscaras.",
+      "Eres esa clase de alegría pequeña que hace grande cualquier día.",
+      "Contigo aprendí que no hace falta nada extraordinario para ser feliz, solo tenerte cerca.",
+      "Eres mi persona favorita para las cosas simples: hablar, reír, no hacer nada."
+    ],
+    lavender: [
+      "Tienes esa calma que me hace respirar mejor cuando estoy contigo.",
+      "Eres mi lugar seguro, mi manera de bajarle el ritmo al día.",
+      "Contigo hasta el silencio se siente cómodo y bonito.",
+      "Eres paz en forma de persona.",
+      "Me encanta cómo logras calmarme sin siquiera intentarlo.",
+      "Contigo todo se siente más suave, más tranquilo, más en casa."
+    ],
+    butterfly: [
+      "Como una mariposa, llegaste a mi vida sin avisar y la volviste más bonita.",
+      "Desde que estás tú, todo se siente más liviano.",
+      "Eres ese cambio bonito que no sabía que necesitaba.",
+      "Contigo hasta las cosas pequeñas se sienten mágicas.",
+      "Eres la razón por la que ahora creo más en las cosas bonitas de la vida.",
+      "Verte sonreír es de mis cosas favoritas en este mundo."
+    ],
+    bird: [
+      "Si pudiera cantarte algo todos los días, sería lo mucho que te quiero.",
+      "Eres esa melodía que hace que las mañanas valgan la pena.",
+      "Contigo hasta despertar se siente distinto, más bonito.",
+      "Eres mi lugar favorito para volver, siempre.",
+      "Quiero seguir construyendo este nido contigo, poquito a poco.",
+      "Cada día vuelo un poco más alto porque sé que tú también crees en mí."
+    ],
+    pet_touch: [
+      "Rayito mueve la cola: eso significa que se siente tan querido como yo cuando estoy contigo.",
+      "Así de simple es el cariño de verdad: un abrazo, una caricia, y ya todo está bien.",
+      "Rayito aprendió a confiar rápido en ti… se nota que reconoce a la gente buena.",
+      "Cada caricia que le das a Rayito es, en el fondo, un poquito de todo el cariño que te tengo.",
+      "Rayito ronronea feliz. Contigo hasta los animales imaginarios se sienten en casa.",
+      "Este jardín, esta mascota, este mensaje: todo es una forma distinta de decirte te quiero."
+    ],
+    pet_feed: [
+      "A Rayito le encantó esa flor, casi tanto como a mí me encanta cuidarte a ti.",
+      "Alimentar algo pequeño con cariño es un poco como quererte: constante, sin pedir nada a cambio.",
+      "Rayito ya confía en ti para la hora de comer. Yo confío en ti para todo lo demás.",
+      "Cada flor que le das a Rayito hace crecer un poquito más este jardín… y lo que siento por ti.",
+      "Rayito está feliz y bien alimentado, como debería estar siempre tu corazón: lleno."
+    ],
+    pet_milestone: [
+      "Rayito ya te quiere muchísimo… y aun así, yo te quiero un poquito más.",
+      "El lazo que le pusiste a Rayito significa que ya es oficialmente parte de nuestra historia.",
+      "Has cuidado tan bien a Rayito que ya casi brilla de lo feliz que está. Igual que yo cuando estoy contigo."
+    ],
+    tree: [
+      "Este es nuestro árbol: firme, con raíces, creciendo cada día un poco más, igual que nosotros."
+    ]
+  };
+
+  /* =========================================================================
+     ✏️ EDITA AQUÍ TUS FOTOS
+     Guarda cada imagen junto a este archivo con el nombre indicado en "src"
+     y escribe en "caption" qué es lo que más te gusta de esa foto.
+  ========================================================================= */
+  const photos = [
+    { src: "foto1.jpg", caption: "De esta foto me enamoran tus ojos 👀💕" },
+    { src: "foto2.jpg", caption: "Aquí se nota lo hermosa que te ves cuando ríes así 😍" },
+    { src: "foto3.jpg", caption: "Esta foto me encanta, te ves demasiado atractiva 🔥❤️" },
+    { src: "foto4.jpg", caption: "Mi favorita, porque se nota lo feliz que te hace ese momento 🥹" }
+  ];
+
+  const flowerMeta = {
+    sunflower: { icon: "🌻", name: "Girasol" },
+    lily: { icon: "🤍", name: "Lirio" },
+    rose: { icon: "🌹", name: "Rosa" },
+    tulip: { icon: "🌷", name: "Tulipán" },
+    daisy: { icon: "🌼", name: "Margarita" },
+    lavender: { icon: "💜", name: "Lavanda" },
+    butterfly: { icon: "🦋", name: "Mariposa" },
+    bird: { icon: "🐦", name: "Pajarito" },
+    pet_touch: { icon: "🦊", name: "Rayito" },
+    pet_feed: { icon: "🌸", name: "Rayito" },
+    pet_milestone: { icon: "🎀", name: "Rayito" },
+    tree: { icon: "🌳", name: "Nuestro árbol" }
+  };
+
+  /* ===== Generación de flores SVG ===== */
+  function svgSunflower(){
+    return `<svg viewBox="0 0 60 60"><g>
+      ${Array.from({length:12}).map((_,i)=>`<ellipse cx="30" cy="12" rx="5" ry="11" fill="#ffce3d" transform="rotate(${i*30} 30 30)"/>`).join('')}
+      <circle cx="30" cy="30" r="9" fill="#7a4a1e"/>
+      <path d="M30,39 L30,55" stroke="#5a8a4a" stroke-width="3" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+  function svgLily(){
+    return `<svg viewBox="0 0 60 60"><g>
+      ${Array.from({length:6}).map((_,i)=>`<path d="M30,30 C33,18 33,10 30,4 C27,10 27,18 30,30Z" fill="#fdfaff" stroke="#c9a4ec" stroke-width="0.6" transform="rotate(${i*60} 30 30)"/>`).join('')}
+      <circle cx="30" cy="30" r="3.5" fill="#e6a800"/>
+      <path d="M30,39 L30,55" stroke="#5a8a4a" stroke-width="3" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+  function svgRose(){
+    return `<svg viewBox="0 0 60 60"><g>
+      <circle cx="30" cy="26" r="12" fill="#e63357"/>
+      <circle cx="30" cy="26" r="8.4" fill="#f2657f"/>
+      <circle cx="30" cy="26" r="5" fill="#9c1d34"/>
+      ${Array.from({length:5}).map((_,i)=>`<path d="M30,26 C36,22 38,16 34,12" stroke="#e63357" stroke-width="1.4" fill="none" opacity="0.6" transform="rotate(${i*72} 30 26)"/>`).join('')}
+      <path d="M30,38 L30,55" stroke="#5a8a4a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M30,46 C24,44 22,40 24,37" stroke="#5a8a4a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+  function svgTulip(){
+    return `<svg viewBox="0 0 60 60"><g>
+      <path d="M18,26 C18,14 22,6 30,6 C38,6 42,14 42,26 C36,22 24,22 18,26Z" fill="#ff7aa2"/>
+      <path d="M30,6 C26,14 26,22 30,26 C34,22 34,14 30,6Z" fill="#c94a71"/>
+      <path d="M30,32 L30,55" stroke="#5a8a4a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M30,44 C24,42 21,37 23,33" stroke="#5a8a4a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+
+  function svgDaisy(){
+    return `<svg viewBox="0 0 60 60"><g>
+      ${Array.from({length:10}).map((_,i)=>`<ellipse cx="30" cy="13" rx="3.6" ry="10" fill="#ffffff" stroke="#eee" stroke-width="0.4" transform="rotate(${i*36} 30 30)"/>`).join('')}
+      <circle cx="30" cy="30" r="7" fill="#ffce3d"/>
+      <path d="M30,37 L30,55" stroke="#5a8a4a" stroke-width="3" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+  function svgLavender(){
+    return `<svg viewBox="0 0 60 60"><g>
+      <path d="M30,50 L30,20" stroke="#5a8a4a" stroke-width="2.6" stroke-linecap="round"/>
+      ${Array.from({length:7}).map((_,i)=>`<circle cx="${30 + (i%2===0?-3:3)}" cy="${18 + i*4.2}" r="3.4" fill="${i%2===0?'#9b7fd4':'#6a4c94'}"/>`).join('')}
+      <circle cx="30" cy="14" r="3.6" fill="#8a67c9"/>
+      <path d="M30,48 C24,46 22,42 24,39" stroke="#5a8a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+
+  const svgByType = { sunflower: svgSunflower, lily: svgLily, rose: svgRose, tulip: svgTulip, daisy: svgDaisy, lavender: svgLavender };
+
+  function buildBed(type, count){
+    const row = document.getElementById('bed-' + type);
+    const svgFn = svgByType[type];
+    for(let i = 0; i < count; i++){
+      const btn = document.createElement('button');
+      btn.className = 'flower-btn';
+      btn.setAttribute('aria-label', flowerMeta[type].name);
+      btn.style.transform = `rotate(${(Math.random()*10 - 5).toFixed(1)}deg)`;
+      btn.innerHTML = svgFn();
+      btn.addEventListener('click', () => openMessage(type));
+      row.appendChild(btn);
+    }
+  }
+  buildBed('sunflower', 6);
+  buildBed('lily', 6);
+  buildBed('rose', 6);
+  buildBed('tulip', 6);
+  buildBed('daisy', 6);
+  buildBed('lavender', 6);
+
+  /* ===== Galería de fotos ===== */
+  const photoGrid = document.getElementById('photoGrid');
+  photos.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'polaroid';
+    card.innerHTML = `
+      <div class="polaroid-photo">
+        <img src="${p.src}" alt="Foto" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <span class="plus">+</span>
+          <div class="hint">Guarda tu imagen como<br><b>${p.src}</b></div>
+        </div>
+      </div>
+      <div class="polaroid-caption">${p.caption}</div>
+    `;
+    photoGrid.appendChild(card);
+  });
+
+  /* ===== Modal de mensajes ===== */
+  let currentType = null;
+
+  function pickMessage(type){
+    const pool = messages[type];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function openMessage(type, el){
+    currentType = type;
+    document.getElementById('msgIcon').textContent = flowerMeta[type].icon;
+    document.getElementById('msgFlowerName').textContent = flowerMeta[type].name;
+    document.getElementById('msgText').textContent = pickMessage(type);
+    document.getElementById('msgAgainBtn').style.display = (type === 'tree') ? 'none' : 'inline-block';
+    document.getElementById('msgOverlay').classList.add('show');
+    if(el && type === 'bird'){
+      el.classList.remove('singing');
+      void el.offsetWidth;
+      el.classList.add('singing');
+    }
+  }
+
+  function rerollMessage(){
+    if(!currentType) return;
+    document.getElementById('msgText').textContent = pickMessage(currentType);
+  }
+
+  function closeMessage(){
+    document.getElementById('msgOverlay').classList.remove('show');
+  }
+
+  /* ===== Bienvenida ===== */
+  function openGate(){
+    document.getElementById('seedBtn').classList.add('blooming');
+    setTimeout(() => {
+      document.getElementById('gate').classList.add('hide');
+      document.getElementById('content').classList.add('show');
+      document.getElementById('creaturesLayer').style.display = 'block';
+    }, 500);
+  }
+
+  /* ===== Pétalos flotantes de ambiente ===== */
+  const canvas = document.getElementById('petals-canvas');
+  const ctx = canvas.getContext('2d');
+  let petals = [];
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const petalColors = ['#ffce3d', '#ff9eb6', '#c9a4ec', '#ff7aa2', '#8fce76', '#ffffff', '#9b7fd4'];
+
+  class Petal{
+    constructor(){ this.reset(true); }
+    reset(initial){
+      this.x = Math.random() * canvas.width;
+      this.y = initial ? Math.random() * canvas.height : -20;
+      this.size = Math.random() * 8 + 5;
+      this.speedY = Math.random() * 0.7 + 0.3;
+      this.sway = Math.random() * Math.PI * 2;
+      this.swaySpeed = Math.random() * 0.02 + 0.01;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.02;
+      this.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+      this.opacity = Math.random() * 0.5 + 0.3;
+    }
+    update(){
+      this.sway += this.swaySpeed;
+      this.y += this.speedY;
+      this.x += Math.sin(this.sway) * 0.5;
+      this.rotation += this.rotSpeed;
+      if(this.y > canvas.height + 20) this.reset(false);
+    }
+    draw(){
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for(let i = 0; i < 22; i++) petals.push(new Petal());
+
+  function animate(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    petals.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  /* =========================================================================
+     🦊 MASCOTA MÁGICA DEL JARDÍN — Rayito
+     - Camina solo dentro de su hábitat (motor de animación con JS).
+     - Se puede acariciar (click/tap directo) o alimentar (botón).
+     - Tiene un nivel de cariño que se guarda entre visitas (localStorage)
+       y desbloquea un lazo especial y mensajes distintos según el nivel.
+     - Se inicializa recién cuando el jardín se abre (evita el bug de
+       medir un contenedor que todavía está oculto con display:none).
+  ========================================================================= */
+  (function initPetEngine(){
+    const habitat = document.getElementById('petHabitat');
+    const creature = document.getElementById('petCreature');
+    const fill = document.getElementById('petAffectionFill');
+    const num = document.getElementById('petAffectionNum');
+    const sparkle = document.getElementById('petSparkle');
+    const bowParts = [document.getElementById('petBow'), document.getElementById('petBowKnot')];
+    const heartLayer = document.getElementById('petHeartLayer');
+    const hintText = document.getElementById('petHintText');
+    if(!habitat || !creature) return;
+
+    const STORAGE_KEY = 'jardin_rayito_afecto';
+    let affection = 0;
+    try{
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if(saved !== null) affection = parseInt(saved, 10) || 0;
+    } catch(e){ /* almacenamiento no disponible, seguimos en memoria */ }
+
+    const MAX_LEVEL = 20;
+
+    function saveAffection(){
+      try{ localStorage.setItem(STORAGE_KEY, String(affection)); } catch(e){}
+    }
+
+    function refreshMeter(){
+      const pct = Math.min((affection / MAX_LEVEL) * 100, 100);
+      fill.style.width = pct + '%';
+      num.textContent = affection;
+
+      if(affection >= 6){ sparkle.classList.add('on'); }
+      if(affection >= 10){ bowParts.forEach(el => el && el.classList.add('show')); }
+
+      if(affection >= MAX_LEVEL){
+        hintText.textContent = 'Rayito está completamente enamorado de este jardín (y de ti) 🦊💛';
+      } else if(affection >= 10){
+        hintText.textContent = 'Rayito ya tiene su lazo especial. ¡Sigue cuidándolo!';
+      } else if(affection >= 1){
+        hintText.textContent = 'A Rayito le encanta tu compañía. Sigue acariciándolo o dale otra flor 🌸';
+      }
+    }
+
+    /* ===== Caminar solo dentro del hábitat ===== */
+    let posPercent = 50;
+    let direction = 1;
+    let walking = true;
+
+    function stepWalk(){
+      if(walking){
+        posPercent += direction * 0.15;
+        if(posPercent > 82){ posPercent = 82; direction = -1; creature.classList.add('face-left'); }
+        if(posPercent < 18){ posPercent = 18; direction = 1; creature.classList.remove('face-left'); }
+        creature.style.left = posPercent + '%';
+      }
+      requestAnimationFrame(stepWalk);
+    }
+
+    /* ===== Corazones flotantes al acariciar ===== */
+    function spawnHearts(count){
+      const hearts = ['💛', '💗', '✨'];
+      for(let i = 0; i < count; i++){
+        const h = document.createElement('span');
+        h.className = 'pet-float-heart';
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        h.style.left = (posPercent + (Math.random() * 14 - 7)) + '%';
+        h.style.bottom = '34%';
+        h.style.animationDelay = (i * 0.12) + 's';
+        heartLayer.appendChild(h);
+        setTimeout(() => h.remove(), 1600 + i * 120);
+      }
+    }
+
+    function bumpAffection(amount){
+      affection = Math.min(affection + amount, MAX_LEVEL);
+      saveAffection();
+      refreshMeter();
+    }
+
+    /* ===== Interacciones ===== */
+    let busy = false;
+
+    window.petTouch = function(){
+      if(busy) return;
+      busy = true;
+      walking = false;
+      creature.classList.add('happy');
+      spawnHearts(4);
+      bumpAffection(1);
+
+      const type = (affection >= 10 && Math.random() < 0.25) ? 'pet_milestone' : 'pet_touch';
+      openMessage(type);
+
+      setTimeout(() => {
+        creature.classList.remove('happy');
+        walking = true;
+        busy = false;
+      }, 1600);
+    };
+
+    window.petFeed = function(){
+      if(busy) return;
+      busy = true;
+      walking = false;
+      creature.classList.add('eating');
+      spawnHearts(2);
+      bumpAffection(2);
+
+      const type = (affection >= 10 && Math.random() < 0.3) ? 'pet_milestone' : 'pet_feed';
+      openMessage(type);
+
+      setTimeout(() => {
+        creature.classList.remove('eating');
+        walking = true;
+        busy = false;
+      }, 1500);
+    };
+
+    creature.style.left = posPercent + '%';
+    refreshMeter();
+    stepWalk();
+  })();
+</script>
+</body>
+</html>
