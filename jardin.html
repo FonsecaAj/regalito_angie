@@ -72,7 +72,7 @@
 
   .seed-btn{
     background:none; border:none; cursor:pointer;
-    width:110px; height:110px;
+    width:140px; height:160px;
     margin:0 auto;
     display:block;
     position:relative;
@@ -80,27 +80,79 @@
   .seed-btn svg{ width:100%; height:100%; }
 
   .seed-btn .bloom-anim{
-    transform-origin:50% 90%;
-    animation: seedIdle 2.6s ease-in-out infinite;
+    transform-origin:50% 85%;
+    animation: seedIdle 3s ease-in-out infinite;
   }
   @keyframes seedIdle{
-    0%,100%{ transform:scale(1) rotate(0deg); }
-    50%{ transform:scale(1.05) rotate(-2deg); }
+    0%,100%{ transform:scale(1) rotate(0deg) translateY(0); }
+    30%{ transform:scale(1.03) rotate(-1.5deg) translateY(-2px); }
+    60%{ transform:scale(1.06) rotate(1deg) translateY(-1px); }
+  }
+
+  .seed-glow{
+    position:absolute;
+    width:80px; height:80px;
+    top:50%; left:50%;
+    transform:translate(-50%,-55%);
+    background:radial-gradient(circle, rgba(255,206,61,0.35) 0%, transparent 70%);
+    border-radius:50%;
+    animation: glowPulse 2.4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes glowPulse{
+    0%,100%{ opacity:0.5; transform:translate(-50%,-55%) scale(1); }
+    50%{ opacity:1; transform:translate(-50%,-55%) scale(1.15); }
+  }
+
+  .seed-sparkles{
+    position:absolute; inset:0;
+    pointer-events:none;
+  }
+  .seed-sparkles span{
+    position:absolute;
+    font-size:0.65rem;
+    opacity:0;
+    animation: seedSparkle 2.8s ease-in-out infinite;
+  }
+  .seed-sparkles span:nth-child(1){ top:12%; left:18%; animation-delay:0s; }
+  .seed-sparkles span:nth-child(2){ top:8%; right:16%; animation-delay:0.7s; }
+  .seed-sparkles span:nth-child(3){ top:30%; left:8%; animation-delay:1.4s; }
+  .seed-sparkles span:nth-child(4){ top:28%; right:10%; animation-delay:2.1s; }
+  @keyframes seedSparkle{
+    0%,100%{ opacity:0; transform:scale(0.6) translateY(0); }
+    50%{ opacity:0.9; transform:scale(1.1) translateY(-3px); }
   }
 
   .seed-hint{
-    margin-top:18px;
-    font-size:0.85rem;
+    margin-top:20px;
+    font-size:0.88rem;
     color:#4a7a55;
-    letter-spacing:0.3px;
+    letter-spacing:0.4px;
+    animation: hintPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes hintPulse{
+    0%,100%{ opacity:0.6; }
+    50%{ opacity:1; }
   }
 
   /* animación de floración al hacer click */
-  .seed-btn.blooming .bloom-anim{ animation: seedBloom 0.9s ease forwards; }
+  .seed-btn.blooming .bloom-anim{ animation: seedBloom 1s ease forwards; }
+  .seed-btn.blooming .seed-glow{ animation: glowBurst 1s ease forwards; }
+  .seed-btn.blooming .seed-sparkles{ animation: sparklesBurst 1s ease forwards; }
   @keyframes seedBloom{
-    0%{ transform:scale(1) rotate(0deg); }
-    40%{ transform:scale(1.5) rotate(6deg); }
-    100%{ transform:scale(2.6) rotate(0deg); opacity:0; }
+    0%{ transform:scale(1) rotate(0deg); filter:brightness(1); }
+    30%{ transform:scale(1.2) rotate(-4deg); filter:brightness(1.3); }
+    60%{ transform:scale(1.8) rotate(3deg); filter:brightness(1.5); }
+    100%{ transform:scale(3) rotate(0deg); opacity:0; filter:brightness(2); }
+  }
+  @keyframes glowBurst{
+    0%{ opacity:0.5; transform:translate(-50%,-55%) scale(1); }
+    50%{ opacity:1; transform:translate(-50%,-55%) scale(2.5); }
+    100%{ opacity:0; transform:translate(-50%,-55%) scale(3); }
+  }
+  @keyframes sparklesBurst{
+    0%{ opacity:1; }
+    100%{ opacity:0; transform:scale(1.5); }
   }
 
   /* ============ CONTENIDO ============ */
@@ -480,6 +532,149 @@
   .back-link:hover{ transform:translateY(-3px); }
   .footer-note{ margin-top:14px; font-size:0.72rem; color:#7a8a7d; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.5; }
 
+  /* ============ MODAL DE IMAGEN DEL ÁRBOL ============ */
+  .tree-img-overlay{
+    position:fixed; inset:0; z-index:85;
+    background:rgba(30,50,30,0.6);
+    backdrop-filter:blur(5px);
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .tree-img-overlay.show{ display:flex; animation: treeModalIn 0.5s ease; }
+  @keyframes treeModalIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+  }
+
+  .tree-img-card{
+    position:relative;
+    max-width:420px; width:100%;
+    background:#fffdf6;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,0.35), 0 0 0 1px rgba(74,122,85,0.15);
+    animation: treeCardPop 0.5s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes treeCardPop{
+    from{ transform:scale(0.8) translateY(30px); opacity:0; }
+    to{ transform:scale(1) translateY(0); opacity:1; }
+  }
+
+  .tree-img-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:1/1;
+    background:linear-gradient(160deg, #e8f5e0, #d4ecc8);
+    overflow:hidden;
+  }
+  .tree-img-frame img.main-photo{
+    width:100%; height:100%;
+    object-fit:contain;
+    display:block;
+    padding:16px 16px 30px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Hojas sueltas flotantes */
+  .tree-img-deco{
+    position:absolute; pointer-events:none;
+  }
+  .tree-img-deco.leaf-tl{
+    top:-6px; left:-6px;
+    width:60px; height:60px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath d='M5,55 C5,30 20,10 55,5 C35,15 25,30 20,50Z' fill='%236fa85e' opacity='0.25'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .tree-img-deco.leaf-tr{
+    top:-4px; right:-4px;
+    width:55px; height:55px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath d='M55,55 C55,30 40,10 5,5 C25,15 35,30 40,50Z' fill='%237fbe66' opacity='0.22'/%3E%3C/svg%3E") no-repeat center/contain;
+  }
+  .tree-img-deco.flower-bl{
+    bottom:8px; left:8px;
+    font-size:1.3rem; opacity:0.5;
+    animation: decoFloat 3s ease-in-out infinite;
+  }
+  .tree-img-deco.flower-br{
+    bottom:10px; right:10px;
+    font-size:1.1rem; opacity:0.45;
+    animation: decoFloat 3s ease-in-out infinite 0.8s;
+  }
+  @keyframes decoFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-4px); }
+  }
+
+  /* Brillo sutil en las esquinas de la imagen */
+  .tree-img-sheen{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,255,255,0.4) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(255,206,61,0.12) 0%, transparent 40%);
+    pointer-events:none;
+    z-index:4;
+  }
+
+  .tree-img-body{
+    padding:22px 24px 20px;
+    text-align:center;
+  }
+
+  .tree-img-eyebrow{
+    font-size:0.65rem;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:#7a9a6a;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+
+  .tree-img-title{
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.5rem, 5vw, 1.9rem);
+    color:#3a6a3a;
+    line-height:1.15;
+    margin-bottom:8px;
+  }
+
+  .tree-img-text{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:0.92rem;
+    line-height:1.65;
+    color:#5a4a3a;
+    margin-bottom:20px;
+  }
+
+  .tree-img-btn{
+    display:inline-block;
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:1.05rem;
+    background:linear-gradient(135deg, #6fa85e, #4a7a55);
+    color:#fff;
+    border:none;
+    padding:11px 26px;
+    border-radius:26px;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(74,122,85,0.3);
+    transition:transform 0.2s ease;
+  }
+  .tree-img-btn:hover{ transform:translateY(-2px); }
+  .tree-img-btn:active{ transform:translateY(0); }
+
+  /* corazones que salen del tronco al hacer click */
+  .tree-heart-burst{
+    position:absolute;
+    pointer-events:none;
+    font-size:1rem;
+    animation: treeHeartRise 1.2s ease-out forwards;
+  }
+  @keyframes treeHeartRise{
+    0%{ opacity:1; transform:translateY(0) scale(0.7); }
+    100%{ opacity:0; transform:translateY(-70px) scale(1.2); }
+  }
+
   /* ============ MODAL DE MENSAJE ============ */
   .msg-overlay{
     position:fixed; inset:0; z-index:80;
@@ -561,14 +756,66 @@
     <h1 class="gate-title">Antes de entrar,<br>planta esta semillita</h1>
     <p class="gate-text">"Detrás de esta semilla crece un jardín entero de cosas que quiero decirte."</p>
     <button class="seed-btn" id="seedBtn" onclick="openGate()" aria-label="Tocar semilla para entrar">
-      <svg class="bloom-anim" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="50" cy="78" rx="30" ry="6" fill="#4a7a55" opacity="0.25"/>
-        <path d="M50,78 C50,60 50,45 50,32" stroke="#5a8a4a" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M50,55 C42,50 36,52 33,58 C40,60 46,58 50,55Z" fill="#6fa85e"/>
-        <path d="M50,45 C58,40 64,42 67,48 C60,50 54,48 50,45Z" fill="#7fb86a"/>
-        <g transform="translate(50,26)">
-          <ellipse rx="9" ry="12" fill="#8a5a35"/>
-          <ellipse rx="6" ry="8" fill="#a5713f"/>
+      <div class="seed-glow"></div>
+      <div class="seed-sparkles">
+        <span>✨</span><span>✨</span><span>✨</span><span>✨</span>
+      </div>
+      <svg class="bloom-anim" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sombra suave en el suelo -->
+        <ellipse cx="60" cy="130" rx="32" ry="5" fill="#3a6a3a" opacity="0.18"/>
+        <ellipse cx="60" cy="130" rx="18" ry="3" fill="#3a6a3a" opacity="0.12"/>
+
+        <!-- Tierra / montículo -->
+        <path d="M30,130 Q38,118 60,116 Q82,118 90,130 Z" fill="#7a5a35"/>
+        <path d="M34,130 Q42,120 60,118 Q78,120 86,130 Z" fill="#8a6a42"/>
+        <path d="M40,130 Q48,123 60,121 Q72,123 80,130 Z" fill="#9a7a52" opacity="0.6"/>
+
+        <!-- Raíces tiny visibles -->
+        <path d="M52,128 C48,132 44,136 40,138" stroke="#6a4a28" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+        <path d="M68,128 C72,133 76,136 80,137" stroke="#6a4a28" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+
+        <!-- Tallo principal con curva orgánica -->
+        <path d="M60,118 C59,105 58,90 57,78 C56,70 58,62 60,55" stroke="#4a8a3a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M60,118 C59,106 58,92 57,80 C56,72 58,64 60,57" stroke="#5a9a4a" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+        <!-- Hoja izquierda grande -->
+        <path d="M57,90 C48,84 38,82 30,86 C34,92 42,96 57,90Z" fill="#5aaa48"/>
+        <path d="M57,90 C48,85 40,84 34,87" stroke="#4a9a38" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <path d="M55,89 C48,88 42,90 38,92" stroke="#4a9a38" stroke-width="0.6" fill="none" opacity="0.35"/>
+        <!-- Hoja izquierda pequeña -->
+        <path d="M58,76 C52,72 46,72 42,76 C46,80 52,80 58,76Z" fill="#68b858" opacity="0.85"/>
+
+        <!-- Hoja derecha grande -->
+        <path d="M60,82 C68,76 78,74 86,78 C82,84 74,88 60,82Z" fill="#5aaa48"/>
+        <path d="M60,82 C68,77 76,76 82,78" stroke="#4a9a38" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <path d="M62,81 C70,80 76,82 80,84" stroke="#4a9a38" stroke-width="0.6" fill="none" opacity="0.35"/>
+        <!-- Hoja derecha pequeña -->
+        <path d="M60,68 C66,64 72,64 76,68 C72,72 66,72 60,68Z" fill="#68b858" opacity="0.85"/>
+
+        <!-- SEMILLA principal -->
+        <g transform="translate(60,42)">
+          <!-- Sombra de la semilla -->
+          <ellipse cx="1" cy="14" rx="11" ry="5" fill="#3a5a2a" opacity="0.15"/>
+          <!-- Cuerpo de la semilla -->
+          <ellipse rx="11" ry="14" fill="#7a5530"/>
+          <ellipse rx="10" ry="13" fill="#8a6540"/>
+          <!-- Brillo principal -->
+          <ellipse cx="-3" cy="-4" rx="5" ry="7" fill="#a07a50" opacity="0.7"/>
+          <ellipse cx="-4" cy="-5" rx="2.5" ry="4" fill="#b89060" opacity="0.5"/>
+          <!-- Brillo pequeño ( highlight ) -->
+          <ellipse cx="-5" cy="-7" rx="1.2" ry="2" fill="#d4aa70" opacity="0.6"/>
+          <!-- Línea central de la semilla -->
+          <path d="M0,-13 C-1,-6 0,2 0,13" stroke="#6a4a28" stroke-width="0.8" fill="none" opacity="0.35"/>
+          <!-- Textura sutil -->
+          <path d="M-6,-2 C-4,-4 -2,-3 0,-2" stroke="#6a4a28" stroke-width="0.4" fill="none" opacity="0.2"/>
+          <path d="M-5,4 C-3,2 -1,3 1,4" stroke="#6a4a28" stroke-width="0.4" fill="none" opacity="0.2"/>
+        </g>
+
+        <!-- Pequeño brote emergiendo de la semilla -->
+        <g transform="translate(60,28)">
+          <path d="M0,2 C-1,-4 -2,-10 -1,-16" stroke="#5a9a48" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M-1,0 C-6,-4 -8,-8 -6,-12 C-2,-10 -1,-6 -1,0Z" fill="#6ab858" opacity="0.9"/>
+          <path d="M-1,-2 C4,-6 6,-10 4,-14 C0,-12 -1,-8 -1,-2Z" fill="#78c868" opacity="0.8"/>
         </g>
       </svg>
     </button>
@@ -582,7 +829,7 @@
 
     <div class="hero">
       <div class="hero-eyebrow">Bienvenida a</div>
-      <h1 class="hero-title">El Jardín de Nosotros</h1>
+      <h1 class="hero-title">El Jardín de pao</h1>
       <p class="hero-sub">— un rincón para respirar, y para sentirte amada —</p>
     </div>
 
@@ -622,11 +869,11 @@
           <circle cx="80" cy="70" r="4" fill="#fff2a8" opacity="0.8"/>
         </g>
         <g font-family="Caveat, cursive" font-size="22" fill="#4a3b2a" opacity="0.75">
-          <text x="120" y="200" text-anchor="middle">❤</text>
+          <text x="120" y="200" text-anchor="middle" style="cursor:pointer;" onclick="event.stopPropagation(); openTreeImage();">❤</text>
         </g>
       </svg>
       </div>
-      <p class="tree-hint">Toca el árbol (o a los pajaritos) para leer un mensaje especial 🌳💌</p>
+      <p class="tree-hint">Toca el árbol o los pajaritos para un mensaje, y el 🤎 del tronco para una sorpresa 🌳💌</p>
     </div>
 
     <!-- MASCOTA MÁGICA DEL JARDÍN -->
@@ -750,6 +997,26 @@
     <div class="msg-actions">
       <button class="msg-btn again" id="msgAgainBtn" onclick="rerollMessage()">Ver otro mensaje 🌸</button>
       <button class="msg-btn close" onclick="closeMessage()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL IMAGEN DEL ÁRBOL ============ -->
+<div class="tree-img-overlay" id="treeImgOverlay" onclick="closeTreeImage(event)">
+  <div class="tree-img-card" onclick="event.stopPropagation()">
+    <div class="tree-img-frame">
+      <img class="main-photo" src="jardin/arbol.png" alt="Nuestro árbol" onerror="this.style.display='none';" />
+      <div class="tree-img-sheen"></div>
+      <div class="tree-img-deco leaf-tl"></div>
+      <div class="tree-img-deco leaf-tr"></div>
+      <div class="tree-img-deco flower-bl">🌸</div>
+      <div class="tree-img-deco flower-br">🍃</div>
+    </div>
+    <div class="tree-img-body">
+      <div class="tree-img-eyebrow">Nuestro árbol especial</div>
+      <h3 class="tree-img-title">Así crece nuestro amor 🌳</h3>
+      <p class="tree-img-text">Al igual que este árbol, lo nuestro tiene raíces fuertes, ramas que nos cobijan y hojas que se renuevan cada día. Gracias por crecer conmigo.</p>
+      <button class="tree-img-btn" onclick="closeTreeImage()">Cerrar con cariño 💚</button>
     </div>
   </div>
 </div>
@@ -1006,6 +1273,35 @@
 
   function closeMessage(){
     document.getElementById('msgOverlay').classList.remove('show');
+  }
+
+  /* ===== Modal imagen del árbol ===== */
+  function openTreeImage(){
+    const overlay = document.getElementById('treeImgOverlay');
+    overlay.classList.add('show');
+    spawnTreeHearts();
+  }
+
+  function closeTreeImage(e){
+    if(e && e.target !== document.getElementById('treeImgOverlay')) return;
+    document.getElementById('treeImgOverlay').classList.remove('show');
+  }
+
+  function spawnTreeHearts(){
+    const treeSvg = document.querySelector('.tree-scene svg');
+    if(!treeSvg) return;
+    const rect = treeSvg.getBoundingClientRect();
+    const hearts = ['❤','💚','🌸','✨','🌿'];
+    for(let i = 0; i < 8; i++){
+      const h = document.createElement('span');
+      h.className = 'tree-heart-burst';
+      h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      h.style.left = (rect.left + rect.width * 0.4 + Math.random() * rect.width * 0.2) + 'px';
+      h.style.top = (rect.top + rect.height * 0.72 + Math.random() * 20) + 'px';
+      h.style.animationDelay = (i * 0.1) + 's';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1500);
+    }
   }
 
   /* ===== Bienvenida ===== */
